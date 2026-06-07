@@ -1,0 +1,42 @@
+name: Render Pomodoro
+
+on:
+  workflow_dispatch:
+    inputs:
+      composition:
+        description: "Hangi kompozisyon render edilsin?"
+        type: choice
+        default: PomodoroDemo
+        options:
+          - PomodoroDemo
+          - Pomodoro
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chrome Headless Shell
+        run: npx remotion browser ensure
+
+      - name: Render video
+        run: npx remotion render ${{ inputs.composition }} out/${{ inputs.composition }}.mp4 --log=verbose
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.composition }}
+          path: out/${{ inputs.composition }}.mp4
+          retention-days: 14
+          if-no-files-found: error
