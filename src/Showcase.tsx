@@ -1,9 +1,7 @@
 import React from "react";
 import { AbsoluteFill } from "remotion";
 import { z } from "zod";
-import { CozyScene } from "./scene/CozyScene";
-import { GradientScene } from "./scene/GradientScene";
-import { Background } from "./components/Background";
+import { SceneFor } from "./scene/SceneFor";
 import { DigitalClock } from "./components/DigitalClock";
 import { fontByKey } from "./fonts";
 import { THEMES } from "./themes";
@@ -13,28 +11,12 @@ export const showcaseSchema = z.object({
 });
 export type ShowcaseProps = z.infer<typeof showcaseSchema>;
 
-const SceneFor: React.FC<{ id: number }> = ({ id }) => {
-  const theme = THEMES[id] ?? THEMES[0];
-  const s = theme.scene;
-  if (s.kind === "cozy") return <CozyScene tint={s.tint} />;
-  if (s.kind === "forest")
-    return (
-      <AbsoluteFill>
-        <Background hasBgImage />
-        <AbsoluteFill
-          style={{ background: "rgba(4,8,6,0.28)", pointerEvents: "none" }}
-        />
-      </AbsoluteFill>
-    );
-  return <GradientScene {...s.props} />;
-};
-
 export const Showcase: React.FC<ShowcaseProps> = ({ styleId }) => {
   const theme = THEMES[styleId] ?? THEMES[0];
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#05080d" }}>
-      <SceneFor id={styleId} />
+      <SceneFor styleId={styleId} />
 
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
         <DigitalClock

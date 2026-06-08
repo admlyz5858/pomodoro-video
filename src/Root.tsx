@@ -9,6 +9,12 @@ import {
   timeline25,
 } from "./pomodoro25Schema";
 import { Showcase, showcaseSchema } from "./Showcase";
+import { PomodoroSequence } from "./PomodoroSequence";
+import {
+  planSequence,
+  sequenceSchema,
+  SequenceProps,
+} from "./sequenceSchema";
 
 const FPS = 30;
 const WIDTH = 1920;
@@ -93,6 +99,50 @@ const calcMeta25: CalculateMetadataFunction<Pomodoro25Props> = ({ props }) => ({
   durationInFrames: Math.max(1, timeline25(props, FPS).total),
 });
 
+/* ---------- Çok-stilli dizilim (25/5 × 3, her blok farklı stil) ---------- */
+
+const seqBase = {
+  introText: "DEEP FOCUS",
+  outroText: "WELL DONE",
+  focusLabel: "FOCUS",
+  breakLabel: "BREAK",
+  hasLofi: true,
+  hasRain: true,
+  hasChime: true,
+};
+
+const fullSeq: SequenceProps = {
+  ...seqBase,
+  introSeconds: 5,
+  outroSeconds: 6,
+  segments: [
+    { kind: "focus", minutes: 25, styleId: 0 },
+    { kind: "break", minutes: 5, styleId: 1 },
+    { kind: "focus", minutes: 25, styleId: 2 },
+    { kind: "break", minutes: 5, styleId: 3 },
+    { kind: "focus", minutes: 25, styleId: 5 },
+    { kind: "break", minutes: 10, styleId: 7 },
+  ],
+};
+
+const demoSeq: SequenceProps = {
+  ...seqBase,
+  introSeconds: 3,
+  outroSeconds: 4,
+  segments: [
+    { kind: "focus", minutes: 12 / 60, styleId: 0 },
+    { kind: "break", minutes: 4 / 60, styleId: 1 },
+    { kind: "focus", minutes: 12 / 60, styleId: 2 },
+    { kind: "break", minutes: 4 / 60, styleId: 3 },
+    { kind: "focus", minutes: 12 / 60, styleId: 5 },
+    { kind: "break", minutes: 6 / 60, styleId: 7 },
+  ],
+};
+
+const calcMetaSeq: CalculateMetadataFunction<SequenceProps> = ({ props }) => ({
+  durationInFrames: Math.max(1, planSequence(props, FPS).total),
+});
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -102,6 +152,27 @@ export const RemotionRoot: React.FC = () => {
         schema={showcaseSchema}
         defaultProps={{ styleId: 0 }}
         durationInFrames={150}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+
+      <Composition
+        id="PomodoroSeq"
+        component={PomodoroSequence}
+        schema={sequenceSchema}
+        defaultProps={fullSeq}
+        calculateMetadata={calcMetaSeq}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="PomodoroSeqDemo"
+        component={PomodoroSequence}
+        schema={sequenceSchema}
+        defaultProps={demoSeq}
+        calculateMetadata={calcMetaSeq}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
