@@ -7,3 +7,7 @@ build
 
 # Ignore the output video from Git but not videos you import into src/.
 out
+
+*.mp4
+artifact_demo/
+artifact_full/

@@ -6,8 +6,10 @@ on:
       composition:
         description: "Hangi kompozisyon render edilsin?"
         type: choice
-        default: PomodoroDemo
+        default: Pomodoro25Demo
         options:
+          - Pomodoro25Demo
+          - Pomodoro25
           - PomodoroDemo
           - Pomodoro
 

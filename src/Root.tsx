@@ -2,14 +2,21 @@ import "./index.css";
 import { CalculateMetadataFunction, Composition } from "remotion";
 import { Pomodoro } from "./Pomodoro";
 import { PomodoroProps, pomodoroSchema, timeline } from "./schema";
+import { Pomodoro25 } from "./Pomodoro25";
+import {
+  Pomodoro25Props,
+  pomodoro25Schema,
+  timeline25,
+} from "./pomodoro25Schema";
 
 const FPS = 30;
 const WIDTH = 1920;
 const HEIGHT = 1080;
 
-// Sonbahar / lofi paleti
-const FOCUS_COLOR = "#e0863a"; // sıcak amber
-const BREAK_COLOR = "#7fb08a"; // yumuşak orman yeşili
+/* ---------- Eski: 50/10 yağmurlu orman ---------- */
+
+const FOCUS_COLOR = "#e0863a";
+const BREAK_COLOR = "#7fb08a";
 
 const baseProps: Omit<
   PomodoroProps,
@@ -25,7 +32,6 @@ const baseProps: Omit<
   hasSfx: true,
 };
 
-// Tam video: 10 sn geri sayım + 50 dk odak + 10 dk mola
 const fullProps: PomodoroProps = {
   ...baseProps,
   countdownSeconds: 10,
@@ -33,30 +39,89 @@ const fullProps: PomodoroProps = {
   breakMinutes: 10,
 };
 
-// Demo (1 dk): 10 sn geri sayım + 40 sn odak + 10 sn mola
 const demoProps: PomodoroProps = {
   ...baseProps,
   countdownSeconds: 10,
-  focusMinutes: 40 / 60, // 40 sn
-  breakMinutes: 10 / 60, // 10 sn
+  focusMinutes: 40 / 60,
+  breakMinutes: 10 / 60,
 };
 
-const calculateMetadata: CalculateMetadataFunction<PomodoroProps> = ({
-  props,
-}) => {
-  const { total } = timeline(props, FPS);
-  return { durationInFrames: Math.max(1, total) };
+const calcMeta: CalculateMetadataFunction<PomodoroProps> = ({ props }) => ({
+  durationInFrames: Math.max(1, timeline(props, FPS).total),
+});
+
+/* ---------- Yeni: 25/5 cozy lofi gece odası ---------- */
+
+const ACCENT_FOCUS = "#eaa75e"; // sıcak amber
+const ACCENT_BREAK = "#86b8c4"; // ay ışığı teal
+
+const base25: Omit<
+  Pomodoro25Props,
+  "focusMinutes" | "breakMinutes" | "introSeconds" | "outroSeconds"
+> = {
+  focusLabel: "FOCUS",
+  breakLabel: "BREAK",
+  introKicker: "FOCUS SESSION",
+  outroText: "WELL DONE",
+  accentFocus: ACCENT_FOCUS,
+  accentBreak: ACCENT_BREAK,
+  sessionTotal: 4,
+  sessionCurrent: 0,
+  hasLofi: true,
+  hasRain: true,
+  hasChime: true,
 };
+
+const full25: Pomodoro25Props = {
+  ...base25,
+  introSeconds: 5,
+  focusMinutes: 25,
+  breakMinutes: 5,
+  outroSeconds: 5,
+};
+
+const demo25: Pomodoro25Props = {
+  ...base25,
+  introSeconds: 5,
+  focusMinutes: 35 / 60, // 35 sn
+  breakMinutes: 12 / 60, // 12 sn
+  outroSeconds: 5,
+};
+
+const calcMeta25: CalculateMetadataFunction<Pomodoro25Props> = ({ props }) => ({
+  durationInFrames: Math.max(1, timeline25(props, FPS).total),
+});
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
+        id="Pomodoro25"
+        component={Pomodoro25}
+        schema={pomodoro25Schema}
+        defaultProps={full25}
+        calculateMetadata={calcMeta25}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="Pomodoro25Demo"
+        component={Pomodoro25}
+        schema={pomodoro25Schema}
+        defaultProps={demo25}
+        calculateMetadata={calcMeta25}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+
+      <Composition
         id="Pomodoro"
         component={Pomodoro}
         schema={pomodoroSchema}
         defaultProps={fullProps}
-        calculateMetadata={calculateMetadata}
+        calculateMetadata={calcMeta}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
@@ -66,7 +131,7 @@ export const RemotionRoot: React.FC = () => {
         component={Pomodoro}
         schema={pomodoroSchema}
         defaultProps={demoProps}
-        calculateMetadata={calculateMetadata}
+        calculateMetadata={calcMeta}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
