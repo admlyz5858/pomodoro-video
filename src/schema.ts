@@ -1,19 +1,14 @@
 import { z } from "zod";
 
-// Pomodoro videosunun tüm parametreleri. Süreler dakika/saniye cinsindendir;
-// kareye çevirme işini timeline() yapar.
+// Pomodoro videosunun tüm parametreleri.
 export const pomodoroSchema = z.object({
   // Faz süreleri
+  countdownSeconds: z.number().min(0), // başlangıçtaki geri sayım (10 sn)
   focusMinutes: z.number().min(0),
   breakMinutes: z.number().min(0),
-  introSeconds: z.number().min(0),
-  breakIntroSeconds: z.number().min(0),
-  outroSeconds: z.number().min(0),
 
-  // Metinler
-  introText: z.string(),
-  breakText: z.string(),
-  outroText: z.string(),
+  // Metinler / etiketler
+  introLabel: z.string(), // geri sayım sırasında üstte (örn. STAY FOCUSED)
   focusLabel: z.string(),
   breakLabel: z.string(),
 
@@ -21,15 +16,15 @@ export const pomodoroSchema = z.object({
   focusColor: z.string(),
   breakColor: z.string(),
 
-  // Arka plan fotoğrafı public/ içinde var mı? Yoksa degrade fallback kullanılır.
+  // Varlık bayrakları (public/ içinde dosya var mı?)
   hasBgImage: z.boolean(),
-  // Arka plan müziği public/ içinde var mı?
   hasMusic: z.boolean(),
+  hasSfx: z.boolean(), // tick + chime ses efektleri
 });
 
 export type PomodoroProps = z.infer<typeof pomodoroSchema>;
 
-export type Phase = "intro" | "focus" | "breakIntro" | "break" | "outro";
+export type Phase = "introCountdown" | "focus" | "break";
 
 export interface PhaseSpan {
   phase: Phase;
@@ -39,11 +34,9 @@ export interface PhaseSpan {
 
 // Proplardan ve fps'ten tüm fazların kare aralıklarını ve toplam süreyi hesaplar.
 export const timeline = (props: PomodoroProps, fps: number) => {
-  const introDur = Math.round(props.introSeconds * fps);
+  const countdownDur = Math.round(props.countdownSeconds * fps);
   const focusDur = Math.round(props.focusMinutes * 60 * fps);
-  const breakIntroDur = Math.round(props.breakIntroSeconds * fps);
   const breakDur = Math.round(props.breakMinutes * 60 * fps);
-  const outroDur = Math.round(props.outroSeconds * fps);
 
   const spans: PhaseSpan[] = [];
   let cursor = 0;
@@ -54,11 +47,15 @@ export const timeline = (props: PomodoroProps, fps: number) => {
     }
   };
 
-  push("intro", introDur);
+  push("introCountdown", countdownDur);
   push("focus", focusDur);
-  push("breakIntro", breakIntroDur);
   push("break", breakDur);
-  push("outro", outroDur);
 
-  return { spans, total: cursor };
+  return {
+    spans,
+    total: cursor,
+    countdownDur,
+    focusDur,
+    breakDur,
+  };
 };

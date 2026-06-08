@@ -8,13 +8,33 @@ import {
   useVideoConfig,
 } from "remotion";
 import { Background } from "./components/Background";
+import { CountdownIntro } from "./components/CountdownIntro";
 import { TimerPhase } from "./components/TimerPhase";
-import { TextScreen } from "./components/TextScreen";
+import { Sfx } from "./components/Sfx";
 import { PomodoroProps, timeline } from "./schema";
 
 export const Pomodoro: React.FC<PomodoroProps> = (props) => {
   const { fps, durationInFrames } = useVideoConfig();
-  const { spans } = timeline(props, fps);
+  const { spans, countdownDur, focusDur } = timeline(props, fps);
+
+  // Faz başlangıçları (mutlak kare)
+  const focusStart = countdownDur;
+  const breakStart = countdownDur + focusDur;
+
+  // --- Ses zamanlamaları (mutlak kare) ---
+  // Başlangıç geri sayımı: her saniye bir tick (10, 9, ... 1)
+  const introTicks: number[] = [];
+  const introSecs = Math.round(props.countdownSeconds);
+  for (let s = 0; s < introSecs; s++) introTicks.push(s * fps);
+
+  // Odağın son 10 saniyesi: her saniye bir tick (00:10 ... 00:01)
+  const focusTicks: number[] = [];
+  if (focusDur >= 10 * fps) {
+    for (let m = 10; m >= 1; m--) focusTicks.push(focusStart + focusDur - m * fps);
+  }
+
+  // Geçiş çınları: odağa girerken ve molaya girerken
+  const chimeFrames = [focusStart, breakStart];
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#060a07" }}>
@@ -28,7 +48,7 @@ export const Pomodoro: React.FC<PomodoroProps> = (props) => {
             interpolate(
               f,
               [0, 2 * fps, durationInFrames - 3 * fps, durationInFrames],
-              [0, 0.7, 0.7, 0],
+              [0, 0.55, 0.55, 0],
               { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
             )
           }
@@ -36,17 +56,17 @@ export const Pomodoro: React.FC<PomodoroProps> = (props) => {
       ) : null}
 
       {spans.map((span) => {
-        if (span.phase === "intro") {
+        if (span.phase === "introCountdown") {
           return (
             <Sequence
-              key="intro"
+              key="introCountdown"
               from={span.from}
               durationInFrames={span.durationInFrames}
             >
-              <TextScreen
-                text={props.introText}
-                color={props.focusColor}
+              <CountdownIntro
                 durationInFrames={span.durationInFrames}
+                label={props.introLabel}
+                color={props.focusColor}
               />
             </Sequence>
           );
@@ -66,50 +86,27 @@ export const Pomodoro: React.FC<PomodoroProps> = (props) => {
             </Sequence>
           );
         }
-        if (span.phase === "breakIntro") {
-          return (
-            <Sequence
-              key="breakIntro"
-              from={span.from}
-              durationInFrames={span.durationInFrames}
-            >
-              <TextScreen
-                text={props.breakText}
-                color={props.breakColor}
-                durationInFrames={span.durationInFrames}
-              />
-            </Sequence>
-          );
-        }
-        if (span.phase === "break") {
-          return (
-            <Sequence
-              key="break"
-              from={span.from}
-              durationInFrames={span.durationInFrames}
-            >
-              <TimerPhase
-                durationInFrames={span.durationInFrames}
-                label={props.breakLabel}
-                color={props.breakColor}
-              />
-            </Sequence>
-          );
-        }
         return (
           <Sequence
-            key="outro"
+            key="break"
             from={span.from}
             durationInFrames={span.durationInFrames}
           >
-            <TextScreen
-              text={props.outroText}
-              color={props.breakColor}
+            <TimerPhase
               durationInFrames={span.durationInFrames}
+              label={props.breakLabel}
+              color={props.breakColor}
             />
           </Sequence>
         );
       })}
+
+      {props.hasSfx ? (
+        <Sfx
+          tickFrames={[...introTicks, ...focusTicks]}
+          chimeFrames={chimeFrames}
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };

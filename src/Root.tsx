@@ -11,42 +11,34 @@ const HEIGHT = 1080;
 const FOCUS_COLOR = "#e0863a"; // sıcak amber
 const BREAK_COLOR = "#7fb08a"; // yumuşak orman yeşili
 
-// Varlık dosyaları public/ içine indikçe bunları true yap.
-const HAS_BG_IMAGE = true;
-const HAS_MUSIC = true;
-
 const baseProps: Omit<
   PomodoroProps,
-  "focusMinutes" | "breakMinutes"
+  "countdownSeconds" | "focusMinutes" | "breakMinutes"
 > = {
-  introSeconds: 4,
-  breakIntroSeconds: 3,
-  outroSeconds: 4,
-  introText: "STAY FOCUSED",
-  breakText: "TAKE A BREAK",
-  outroText: "WELL DONE",
+  introLabel: "STAY FOCUSED",
   focusLabel: "FOCUS",
   breakLabel: "BREAK",
   focusColor: FOCUS_COLOR,
   breakColor: BREAK_COLOR,
-  hasBgImage: HAS_BG_IMAGE,
-  hasMusic: HAS_MUSIC,
+  hasBgImage: true,
+  hasMusic: true,
+  hasSfx: true,
 };
 
+// Tam video: 10 sn geri sayım + 50 dk odak + 10 dk mola
 const fullProps: PomodoroProps = {
   ...baseProps,
+  countdownSeconds: 10,
   focusMinutes: 50,
   breakMinutes: 10,
 };
 
-// Demo: tasarımı/animasyonu hızlı görmek için kısa süreler.
+// Demo (1 dk): 10 sn geri sayım + 40 sn odak + 10 sn mola
 const demoProps: PomodoroProps = {
   ...baseProps,
-  focusMinutes: 0.25, // 15 sn
-  breakMinutes: 0.1333, // ~8 sn
-  introSeconds: 2,
-  breakIntroSeconds: 1.5,
-  outroSeconds: 2,
+  countdownSeconds: 10,
+  focusMinutes: 40 / 60, // 40 sn
+  breakMinutes: 10 / 60, // 10 sn
 };
 
 const calculateMetadata: CalculateMetadataFunction<PomodoroProps> = ({
