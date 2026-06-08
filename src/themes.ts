@@ -7,10 +7,14 @@ export type SceneSpec =
   | { kind: "forest" }
   | { kind: "gradient"; props: GradientSceneProps };
 
+// Sahneye uygun ortam sesi
+export type AmbientKey = "rain" | "forest" | "night" | "storm";
+
 export interface Theme {
   id: number;
   name: string;
   scene: SceneSpec;
+  ambient: AmbientKey;
   accentFocus: string;
   accentBreak: string;
   font: FontKey;
@@ -27,6 +31,7 @@ export const THEMES: Theme[] = [
     id: 0,
     name: "Cozy Cool — buz mavisi gece odası",
     scene: { kind: "cozy", tint: "#2f5d86" },
+    ambient: "rain",
     accentFocus: "#84c5ec",
     accentBreak: "#b69ae6",
     font: "serif",
@@ -38,6 +43,7 @@ export const THEMES: Theme[] = [
     id: 1,
     name: "Cozy Amber — sıcak mum ışığı odası",
     scene: { kind: "cozy" },
+    ambient: "rain",
     accentFocus: "#eaa75e",
     accentBreak: "#e88c4a",
     font: "serif",
@@ -47,8 +53,9 @@ export const THEMES: Theme[] = [
   },
   {
     id: 2,
-    name: "Cozy Lavender — lavanta gece odası",
+    name: "Cozy Lavender — lavanta gece odası (fırtına)",
     scene: { kind: "cozy", tint: "#6b4d8f" },
+    ambient: "storm",
     accentFocus: "#e6a3d4",
     accentBreak: "#b69ae6",
     font: "serif",
@@ -60,6 +67,7 @@ export const THEMES: Theme[] = [
     id: 3,
     name: "Rainy Forest — yağmurlu orman",
     scene: { kind: "forest" },
+    ambient: "forest",
     accentFocus: "#9fe0c0",
     accentBreak: "#cfeede",
     font: "serif",
@@ -79,6 +87,7 @@ export const THEMES: Theme[] = [
         vignette: 0.55,
       },
     },
+    ambient: "rain",
     accentFocus: "#cfd6e0",
     accentBreak: "#9aa6b5",
     font: "mono",
@@ -99,6 +108,7 @@ export const THEMES: Theme[] = [
         vignette: 0.6,
       },
     },
+    ambient: "night",
     accentFocus: "#8fb4ff",
     accentBreak: "#b9a3ff",
     font: "geo",
@@ -120,6 +130,7 @@ export const THEMES: Theme[] = [
         vignette: 0.5,
       },
     },
+    ambient: "forest",
     accentFocus: "#ffd9a0",
     accentBreak: "#ffb38a",
     font: "display",
@@ -139,6 +150,7 @@ export const THEMES: Theme[] = [
         vignette: 0.6,
       },
     },
+    ambient: "night",
     accentFocus: "#6ef0c0",
     accentBreak: "#9ab8ff",
     font: "geo",
@@ -160,6 +172,7 @@ export const THEMES: Theme[] = [
         vignette: 0.45,
       },
     },
+    ambient: "night",
     accentFocus: "#ffc8e6",
     accentBreak: "#c8b0ff",
     font: "display",
@@ -180,6 +193,7 @@ export const THEMES: Theme[] = [
         vignette: 0.7,
       },
     },
+    ambient: "rain",
     accentFocus: "#ff5a3c",
     accentBreak: "#ffd23c",
     font: "poster",

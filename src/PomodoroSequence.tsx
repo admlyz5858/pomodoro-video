@@ -11,6 +11,8 @@ import {
 import { SceneFor } from "./scene/SceneFor";
 import { DigitalClock } from "./components/DigitalClock";
 import { TitleCard } from "./components/TitleCard";
+import { Ambient } from "./components/Ambient";
+import { Lightning } from "./components/Lightning";
 import { fontByKey } from "./fonts";
 import { THEMES } from "./themes";
 import { planSequence, PlannedSegment, SequenceProps } from "./sequenceSchema";
@@ -49,7 +51,11 @@ const SegmentView: React.FC<{
 
   return (
     <AbsoluteFill style={{ opacity }}>
+      <Ambient ambient={theme.ambient} phaseFrames={seg.durationInFrames} />
       <SceneFor styleId={seg.styleId} />
+      {theme.ambient === "storm" ? (
+        <Lightning phaseFrames={seg.durationInFrames} />
+      ) : null}
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
         <DigitalClock
           seconds={seconds}
@@ -72,7 +78,7 @@ const SegmentView: React.FC<{
 };
 
 export const PomodoroSequence: React.FC<SequenceProps> = (props) => {
-  const { fps, durationInFrames } = useVideoConfig();
+  const { fps } = useVideoConfig();
   const { introDur, planned, outroFrom, outroDur } = planSequence(props, fps);
 
   const lastTheme =
@@ -81,35 +87,7 @@ export const PomodoroSequence: React.FC<SequenceProps> = (props) => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#05080d" }}>
-      {/* Sesler */}
-      {props.hasLofi ? (
-        <Audio
-          src={staticFile("lofi.mp3")}
-          loop
-          volume={(f) =>
-            interpolate(
-              f,
-              [0, 3 * fps, durationInFrames - 4 * fps, durationInFrames],
-              [0, 0.7, 0.7, 0],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-            )
-          }
-        />
-      ) : null}
-      {props.hasRain ? (
-        <Audio
-          src={staticFile("music.mp3")}
-          loop
-          volume={(f) =>
-            interpolate(
-              f,
-              [0, 3 * fps, durationInFrames - 4 * fps, durationInFrames],
-              [0, 0.2, 0.2, 0],
-              { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-            )
-          }
-        />
-      ) : null}
+      {/* Ortam sesleri segment-bazlı (her blok kendi sahnesine göre) */}
 
       {/* Her blok başında geçiş çını */}
       {props.hasChime
@@ -128,6 +106,7 @@ export const PomodoroSequence: React.FC<SequenceProps> = (props) => {
       {/* Intro */}
       {introDur > 0 ? (
         <Sequence from={0} durationInFrames={introDur}>
+          <Ambient ambient={firstTheme.ambient} phaseFrames={introDur} />
           <TitleCard
             main={props.introText}
             sub="POMODORO"
@@ -151,6 +130,7 @@ export const PomodoroSequence: React.FC<SequenceProps> = (props) => {
       {/* Outro */}
       {outroDur > 0 ? (
         <Sequence from={outroFrom} durationInFrames={outroDur}>
+          <Ambient ambient={lastTheme.ambient} phaseFrames={outroDur} />
           <TitleCard
             main={props.outroText}
             sub="SESSION COMPLETE"
