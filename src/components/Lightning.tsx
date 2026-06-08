@@ -2,6 +2,7 @@ import React from "react";
 import {
   AbsoluteFill,
   Audio,
+  interpolate,
   Sequence,
   staticFile,
   useCurrentFrame,
@@ -31,8 +32,8 @@ export const Lightning: React.FC<{ phaseFrames: number }> = ({
   let op = 0;
   for (const ft of flashes) {
     const d = frame - ft;
-    if (d >= 0 && d < 6) op = Math.max(op, 0.88 * (1 - d / 6));
-    else if (d >= 8 && d < 18) op = Math.max(op, 0.5 * (1 - (d - 8) / 10));
+    if (d >= 0 && d < 6) op = Math.max(op, 0.6 * (1 - d / 6));
+    else if (d >= 8 && d < 18) op = Math.max(op, 0.32 * (1 - (d - 8) / 10));
   }
 
   return (
@@ -49,11 +50,19 @@ export const Lightning: React.FC<{ phaseFrames: number }> = ({
       {flashes.map((ft, i) => (
         <Sequence
           key={i}
-          from={ft + Math.round(1.0 * fps)}
-          durationInFrames={Math.ceil(3 * fps)}
+          from={ft + Math.round(1.4 * fps)}
+          durationInFrames={Math.ceil(3.5 * fps)}
           layout="none"
         >
-          <Audio src={staticFile("thunder.ogg")} volume={0.9} />
+          <Audio
+            src={staticFile("thunder.ogg")}
+            volume={(f) =>
+              interpolate(f, [0, 0.6 * fps, 2.5 * fps, 3.5 * fps], [0, 0.26, 0.26, 0], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+              })
+            }
+          />
         </Sequence>
       ))}
     </>
