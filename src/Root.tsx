@@ -9,6 +9,12 @@ import {
   timeline25,
 } from "./pomodoro25Schema";
 import { Showcase, showcaseSchema } from "./Showcase";
+import {
+  PomodoroSingle,
+  singleSchema,
+  singleTimeline,
+  SingleProps,
+} from "./PomodoroSingle";
 import { PomodoroSequence } from "./PomodoroSequence";
 import {
   planSequence,
@@ -143,6 +149,40 @@ const calcMetaSeq: CalculateMetadataFunction<SequenceProps> = ({ props }) => ({
   durationInFrames: Math.max(1, planSequence(props, FPS).total),
 });
 
+/* ---------- Tek-stil 50/10 (her stil ayrı video, kullanıcı müziği) ---------- */
+
+const singleBase = {
+  introText: "FOCUS SESSION",
+  focusLabel: "FOCUS",
+  breakLabel: "BREAK",
+  outroText: "WELL DONE",
+  musicFile: "bg.mp3", // public/bg.mp3 (kullanıcı verecek)
+  musicVolume: 0.6,
+  keepAmbient: true,
+};
+
+const singleFull: SingleProps = {
+  ...singleBase,
+  styleId: 0,
+  focusMinutes: 50,
+  breakMinutes: 10,
+  introSeconds: 5,
+  outroSeconds: 6,
+};
+
+const singleDemo: SingleProps = {
+  ...singleBase,
+  styleId: 0,
+  focusMinutes: 30 / 60,
+  breakMinutes: 12 / 60,
+  introSeconds: 4,
+  outroSeconds: 4,
+};
+
+const calcMetaSingle: CalculateMetadataFunction<SingleProps> = ({ props }) => ({
+  durationInFrames: Math.max(1, singleTimeline(props, FPS).total),
+});
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -152,6 +192,27 @@ export const RemotionRoot: React.FC = () => {
         schema={showcaseSchema}
         defaultProps={{ styleId: 0 }}
         durationInFrames={150}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+
+      <Composition
+        id="PomodoroSingle"
+        component={PomodoroSingle}
+        schema={singleSchema}
+        defaultProps={singleFull}
+        calculateMetadata={calcMetaSingle}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="PomodoroSingleDemo"
+        component={PomodoroSingle}
+        schema={singleSchema}
+        defaultProps={singleDemo}
+        calculateMetadata={calcMetaSingle}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}

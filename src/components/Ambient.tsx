@@ -16,13 +16,14 @@ const TRACKS: Record<AmbientKey, { src: string; vol: number }[]> = {
 export const Ambient: React.FC<{
   ambient: AmbientKey;
   phaseFrames: number;
-}> = ({ ambient, phaseFrames }) => {
+  gain?: number; // müzik altında kalması için çarpan (varsayılan 1)
+}> = ({ ambient, phaseFrames, gain = 1 }) => {
   const { fps } = useVideoConfig();
   const fade = (f: number, base: number) =>
     interpolate(
       f,
       [0, 0.8 * fps, Math.max(0.8 * fps, phaseFrames - 0.8 * fps), phaseFrames],
-      [0, base, base, 0],
+      [0, base * gain, base * gain, 0],
       { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
     );
 
