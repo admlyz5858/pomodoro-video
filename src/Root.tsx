@@ -52,8 +52,8 @@ const calcMeta: CalculateMetadataFunction<PomodoroProps> = ({ props }) => ({
 
 /* ---------- Yeni: 25/5 cozy lofi gece odası ---------- */
 
-const ACCENT_FOCUS = "#eaa75e"; // sıcak amber
-const ACCENT_BREAK = "#86b8c4"; // ay ışığı teal
+const ACCENT_FOCUS = "#84c5ec"; // buz mavisi
+const ACCENT_BREAK = "#b69ae6"; // lavanta / mor
 
 const base25: Omit<
   Pomodoro25Props,

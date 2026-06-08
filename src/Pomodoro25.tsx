@@ -16,17 +16,19 @@ import { Pomodoro25Props, timeline25 } from "./pomodoro25Schema";
 // Bir faz için saat: opsiyonel geri sayım + giriş fade'i.
 const ClockPhase: React.FC<{
   totalSeconds: number;
+  phaseFrames: number;
   countdown: boolean;
   fadeIn: boolean;
   label: string;
   accent: string;
   sessionTotal: number;
   sessionCurrent: number;
-}> = ({ totalSeconds, countdown, fadeIn, label, accent, sessionTotal, sessionCurrent }) => {
+}> = ({ totalSeconds, phaseFrames, countdown, fadeIn, label, accent, sessionTotal, sessionCurrent }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const elapsed = Math.floor(frame / fps);
   const seconds = countdown ? Math.max(0, totalSeconds - elapsed) : totalSeconds;
+  const progress = countdown && phaseFrames > 0 ? Math.min(1, frame / phaseFrames) : 0;
 
   const enter = fadeIn
     ? interpolate(frame, [0, 1 * fps], [0, 1], {
@@ -47,6 +49,7 @@ const ClockPhase: React.FC<{
     >
       <DigitalClock
         seconds={seconds}
+        progress={progress}
         label={label}
         accent={accent}
         sessionTotal={sessionTotal}
@@ -115,6 +118,7 @@ export const Pomodoro25: React.FC<Pomodoro25Props> = (props) => {
             <Sequence key="intro" from={span.from} durationInFrames={span.durationInFrames}>
               <ClockPhase
                 totalSeconds={Math.round(props.focusMinutes * 60)}
+                phaseFrames={span.durationInFrames}
                 countdown={false}
                 fadeIn
                 label={props.introKicker}
@@ -130,6 +134,7 @@ export const Pomodoro25: React.FC<Pomodoro25Props> = (props) => {
             <Sequence key="focus" from={span.from} durationInFrames={span.durationInFrames}>
               <ClockPhase
                 totalSeconds={Math.round(props.focusMinutes * 60)}
+                phaseFrames={span.durationInFrames}
                 countdown
                 fadeIn={false}
                 label={props.focusLabel}
@@ -145,6 +150,7 @@ export const Pomodoro25: React.FC<Pomodoro25Props> = (props) => {
             <Sequence key="break" from={span.from} durationInFrames={span.durationInFrames}>
               <ClockPhase
                 totalSeconds={Math.round(props.breakMinutes * 60)}
+                phaseFrames={span.durationInFrames}
                 countdown
                 fadeIn={false}
                 label={props.breakLabel}

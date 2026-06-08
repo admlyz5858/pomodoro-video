@@ -25,9 +25,10 @@ jobs:
         run: |
           mkdir -p out
           npx remotion still ${{ inputs.composition }} out/01-intro.png --frame=90 --scale=0.6
-          npx remotion still ${{ inputs.composition }} out/02-focus.png --frame=900 --scale=0.6
-          npx remotion still ${{ inputs.composition }} out/03-break.png --frame=45400 --scale=0.6
-          npx remotion still ${{ inputs.composition }} out/04-outro.png --frame=54220 --scale=0.6
+          npx remotion still ${{ inputs.composition }} out/02-focus-start.png --frame=300 --scale=0.6
+          npx remotion still ${{ inputs.composition }} out/03-focus-mid.png --frame=22650 --scale=0.6
+          npx remotion still ${{ inputs.composition }} out/04-break-mid.png --frame=49500 --scale=0.6
+          npx remotion still ${{ inputs.composition }} out/05-outro.png --frame=54220 --scale=0.6
       - uses: actions/upload-artifact@v4
         with:
           name: stills

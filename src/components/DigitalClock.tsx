@@ -1,12 +1,14 @@
 import React from "react";
 import { useCurrentFrame } from "remotion";
 import { fraunces, jost } from "../fonts";
+import { ProgressRing } from "./ProgressRing";
 
 const two = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${two(Math.floor(s / 60))}:${two(s % 60)}`;
 
 interface Props {
   seconds: number;
+  progress: number; // 0 (dolu halka) → 1 (boş)
   label: string;
   accent: string;
   sessionTotal: number;
@@ -15,6 +17,7 @@ interface Props {
 
 export const DigitalClock: React.FC<Props> = ({
   seconds,
+  progress,
   label,
   accent,
   sessionTotal,
@@ -31,13 +34,13 @@ export const DigitalClock: React.FC<Props> = ({
       <div
         key={i}
         style={{
-          width: 11,
-          height: 11,
+          width: 14,
+          height: 14,
           borderRadius: "50%",
           background: done || active ? accent : "transparent",
-          border: `1.5px solid ${done || active ? accent : "rgba(240,235,225,0.45)"}`,
-          opacity: active ? pulse : done ? 0.9 : 0.55,
-          boxShadow: active ? `0 0 10px ${accent}` : "none",
+          border: `2px solid ${done || active ? accent : "rgba(240,243,250,0.7)"}`,
+          opacity: active ? pulse : done ? 1 : 0.8,
+          boxShadow: done || active ? `0 0 12px ${accent}aa` : "none",
         }}
       />,
     );
@@ -66,6 +69,9 @@ export const DigitalClock: React.FC<Props> = ({
           pointerEvents: "none",
         }}
       />
+
+      {/* Saati çevreleyen ilerleme halkası */}
+      <ProgressRing progress={progress} color={accent} />
 
       {/* Etiket */}
       <div
