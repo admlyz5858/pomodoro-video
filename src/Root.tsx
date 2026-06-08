@@ -108,7 +108,7 @@ const seqBase = {
   breakLabel: "BREAK",
   hasLofi: true,
   hasRain: true,
-  hasChime: true,
+  hasChime: false, // geçiş çını yok (kullanıcı isteği)
 };
 
 const fullSeq: SequenceProps = {
