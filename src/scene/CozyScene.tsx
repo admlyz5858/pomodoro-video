@@ -9,7 +9,8 @@ import { RoomForeground } from "./RoomForeground";
 import { Bokeh } from "./Bokeh";
 
 // Cozy lofi gece sahnesi — tüm katmanlar (tam süre boyunca, global frame).
-export const CozyScene: React.FC = () => {
+// tint: opsiyonel renk overlay'i (cool / lavanta varyantları için).
+export const CozyScene: React.FC<{ tint?: string }> = ({ tint }) => {
   return (
     <AbsoluteFill style={{ backgroundColor: "#05080d" }}>
       <NightSky />
@@ -29,6 +30,18 @@ export const CozyScene: React.FC = () => {
           pointerEvents: "none",
         }}
       />
+      {/* Opsiyonel renk tonu (mood kaydırma) */}
+      {tint ? (
+        <AbsoluteFill
+          style={{
+            background: tint,
+            mixBlendMode: "color",
+            opacity: 0.5,
+            pointerEvents: "none",
+          }}
+        />
+      ) : null}
+
       {/* Sinematik vinyet */}
       <AbsoluteFill
         style={{

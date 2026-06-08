@@ -6,13 +6,24 @@ import { ProgressRing } from "./ProgressRing";
 const two = (n: number) => String(n).padStart(2, "0");
 const fmt = (s: number) => `${two(Math.floor(s / 60))}:${two(s % 60)}`;
 
+export type RingMode = "around" | "thin" | "none";
+
 interface Props {
   seconds: number;
   progress: number; // 0 (dolu halka) → 1 (boş)
   label: string;
   accent: string;
   sessionTotal: number;
-  sessionCurrent: number; // 0 tabanlı; aktif odak indeksi
+  sessionCurrent: number;
+  // Tema seçenekleri (varsayılanlar mevcut görünümü korur)
+  timeFont?: string;
+  labelFont?: string;
+  ringMode?: RingMode;
+  showDots?: boolean;
+  textColor?: string;
+  timeSize?: number;
+  timeWeight?: number;
+  letterSpacing?: number;
 }
 
 export const DigitalClock: React.FC<Props> = ({
@@ -22,28 +33,38 @@ export const DigitalClock: React.FC<Props> = ({
   accent,
   sessionTotal,
   sessionCurrent,
+  timeFont = fraunces,
+  labelFont = jost,
+  ringMode = "around",
+  showDots = true,
+  textColor = "#f6f0e4",
+  timeSize = 270,
+  timeWeight = 500,
+  letterSpacing = 2,
 }) => {
   const frame = useCurrentFrame();
   const pulse = 0.6 + 0.4 * (0.5 + 0.5 * Math.sin(frame * 0.12));
 
   const dots = [];
-  for (let i = 0; i < sessionTotal; i++) {
-    const done = i < sessionCurrent;
-    const active = i === sessionCurrent;
-    dots.push(
-      <div
-        key={i}
-        style={{
-          width: 14,
-          height: 14,
-          borderRadius: "50%",
-          background: done || active ? accent : "transparent",
-          border: `2px solid ${done || active ? accent : "rgba(240,243,250,0.7)"}`,
-          opacity: active ? pulse : done ? 1 : 0.8,
-          boxShadow: done || active ? `0 0 12px ${accent}aa` : "none",
-        }}
-      />,
-    );
+  if (showDots) {
+    for (let i = 0; i < sessionTotal; i++) {
+      const done = i < sessionCurrent;
+      const active = i === sessionCurrent;
+      dots.push(
+        <div
+          key={i}
+          style={{
+            width: 14,
+            height: 14,
+            borderRadius: "50%",
+            background: done || active ? accent : "transparent",
+            border: `2px solid ${done || active ? accent : "rgba(240,243,250,0.7)"}`,
+            opacity: active ? pulse : done ? 1 : 0.8,
+            boxShadow: done || active ? `0 0 12px ${accent}aa` : "none",
+          }}
+        />,
+      );
+    }
   }
 
   return (
@@ -59,24 +80,29 @@ export const DigitalClock: React.FC<Props> = ({
       <div
         style={{
           position: "absolute",
-          width: 760,
-          height: 520,
+          width: 800,
+          height: 540,
           left: "50%",
           top: "50%",
           transform: "translate(-50%,-50%)",
           background:
-            "radial-gradient(ellipse at center, rgba(6,9,14,0.55) 0%, rgba(6,9,14,0.25) 45%, rgba(6,9,14,0) 70%)",
+            "radial-gradient(ellipse at center, rgba(6,9,14,0.5) 0%, rgba(6,9,14,0.22) 45%, rgba(6,9,14,0) 70%)",
           pointerEvents: "none",
         }}
       />
 
-      {/* Saati çevreleyen ilerleme halkası */}
-      <ProgressRing progress={progress} color={accent} />
+      {ringMode !== "none" ? (
+        <ProgressRing
+          progress={progress}
+          color={accent}
+          stroke={ringMode === "thin" ? 5 : 14}
+        />
+      ) : null}
 
       {/* Etiket */}
       <div
         style={{
-          fontFamily: jost,
+          fontFamily: labelFont,
           fontWeight: 400,
           fontSize: 38,
           letterSpacing: 18,
@@ -94,15 +120,15 @@ export const DigitalClock: React.FC<Props> = ({
       {/* Saat */}
       <div
         style={{
-          fontFamily: fraunces,
-          fontWeight: 500,
-          fontSize: 270,
+          fontFamily: timeFont,
+          fontWeight: timeWeight,
+          fontSize: timeSize,
           lineHeight: 1,
-          color: "#f6f0e4",
+          color: textColor,
           fontVariantNumeric: "tabular-nums",
-          letterSpacing: 2,
+          letterSpacing,
           textShadow:
-            "0 4px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,210,150,0.12)",
+            "0 4px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,255,255,0.08)",
           position: "relative",
         }}
       >
@@ -110,16 +136,18 @@ export const DigitalClock: React.FC<Props> = ({
       </div>
 
       {/* Session noktaları */}
-      <div
-        style={{
-          display: "flex",
-          gap: 16,
-          marginTop: 18,
-          position: "relative",
-        }}
-      >
-        {dots}
-      </div>
+      {showDots ? (
+        <div
+          style={{
+            display: "flex",
+            gap: 16,
+            marginTop: 22,
+            position: "relative",
+          }}
+        >
+          {dots}
+        </div>
+      ) : null}
     </div>
   );
 };

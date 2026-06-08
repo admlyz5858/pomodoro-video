@@ -8,6 +8,7 @@ import {
   pomodoro25Schema,
   timeline25,
 } from "./pomodoro25Schema";
+import { Showcase, showcaseSchema } from "./Showcase";
 
 const FPS = 30;
 const WIDTH = 1920;
@@ -95,6 +96,17 @@ const calcMeta25: CalculateMetadataFunction<Pomodoro25Props> = ({ props }) => ({
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="Showcase"
+        component={Showcase}
+        schema={showcaseSchema}
+        defaultProps={{ styleId: 0 }}
+        durationInFrames={150}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+
       <Composition
         id="Pomodoro25"
         component={Pomodoro25}

@@ -1,0 +1,32 @@
+name: Render Style Previews
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  styles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chrome Headless Shell
+        run: npx remotion browser ensure
+      - name: Render 10 style previews
+        run: |
+          mkdir -p out
+          for i in 0 1 2 3 4 5 6 7 8 9; do
+            echo "=== style $i ==="
+            npx remotion still Showcase "out/style-$i.png" \
+              --props="{\"styleId\":$i}" --frame=120 --scale=0.5
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: style-previews
+          path: out/*.png
+          retention-days: 14
+          if-no-files-found: error
