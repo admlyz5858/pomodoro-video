@@ -2,6 +2,7 @@ import React from "react";
 import { AbsoluteFill } from "remotion";
 import { CozyScene } from "./CozyScene";
 import { GradientScene } from "./GradientScene";
+import { WinterCabin } from "./WinterCabin";
 import { Background } from "../components/Background";
 import { THEMES } from "../themes";
 
@@ -10,6 +11,7 @@ export const SceneFor: React.FC<{ styleId: number }> = ({ styleId }) => {
   const theme = THEMES[styleId] ?? THEMES[0];
   const s = theme.scene;
   if (s.kind === "cozy") return <CozyScene tint={s.tint} />;
+  if (s.kind === "cabin") return <WinterCabin glow={s.glow} sky={s.sky} />;
   if (s.kind === "forest")
     return (
       <AbsoluteFill>

@@ -155,6 +155,7 @@ const TimerBlock: React.FC<{
           timeSize={theme.timeSize}
           timeWeight={theme.timeWeight}
           letterSpacing={theme.letterSpacing}
+          scale={theme.clockScale ?? 1}
           pulseLow
         />
       </AbsoluteFill>
@@ -190,6 +191,7 @@ const CountdownBlock: React.FC<{
         font={fontByKey[theme.font]}
         textColor={theme.textColor}
         ringMode={theme.ring}
+        scale={theme.clockScale ?? 1}
       />
     </AbsoluteFill>
   );

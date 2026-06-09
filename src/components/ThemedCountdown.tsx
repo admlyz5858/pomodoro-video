@@ -17,7 +17,8 @@ export const ThemedCountdown: React.FC<{
   font: string;
   textColor: string;
   ringMode: RingMode;
-}> = ({ durationInFrames, label, accent, font, textColor, ringMode }) => {
+  scale?: number;
+}> = ({ durationInFrames, label, accent, font, textColor, ringMode, scale = 1 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -38,6 +39,15 @@ export const ThemedCountdown: React.FC<{
     <AbsoluteFill
       style={{ alignItems: "center", justifyContent: "center", opacity: enter }}
     >
+      <div
+        style={{
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transform: `scale(${scale})`,
+        }}
+      >
       {ringMode !== "none" ? (
         <ProgressRing
           progress={progress}
@@ -74,6 +84,7 @@ export const ThemedCountdown: React.FC<{
         >
           {remaining}
         </div>
+      </div>
       </div>
     </AbsoluteFill>
   );

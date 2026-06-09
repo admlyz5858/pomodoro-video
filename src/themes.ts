@@ -5,10 +5,11 @@ import { GradientSceneProps } from "./scene/GradientScene";
 export type SceneSpec =
   | { kind: "cozy"; tint?: string }
   | { kind: "forest" }
-  | { kind: "gradient"; props: GradientSceneProps };
+  | { kind: "gradient"; props: GradientSceneProps }
+  | { kind: "cabin"; glow?: string; sky?: string };
 
 // Sahneye uygun ortam sesi
-export type AmbientKey = "rain" | "forest" | "night" | "storm";
+export type AmbientKey = "rain" | "forest" | "night" | "storm" | "fire";
 
 export interface Theme {
   id: number;
@@ -24,6 +25,7 @@ export interface Theme {
   timeSize?: number;
   timeWeight?: number;
   letterSpacing?: number;
+  clockScale?: number; // saatin genel ölçeği (1 = normal)
 }
 
 export const THEMES: Theme[] = [
@@ -202,5 +204,85 @@ export const THEMES: Theme[] = [
     textColor: "#f5f5f0",
     timeSize: 460,
     letterSpacing: 8,
+  },
+
+  /* ---- Kış kulübesi (tek tema, blok varyasyonları) ---- */
+  {
+    id: 10,
+    name: "Winter Cabin — şömine (odak 1)",
+    scene: { kind: "cabin", glow: "#ff9a3c", sky: "linear-gradient(180deg,#2a3a55,#3a4763,#52566e)" },
+    ambient: "fire",
+    clockScale: 0.7,
+    accentFocus: "#f4e3bf",
+    accentBreak: "#f4e3bf",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#f7efe0",
+  },
+  {
+    id: 11,
+    name: "Winter Cabin — kar molası (mola 1)",
+    scene: { kind: "cabin", glow: "#ffb24a", sky: "linear-gradient(180deg,#22304a,#2e3b57,#444a63)" },
+    ambient: "fire",
+    clockScale: 0.7,
+    accentFocus: "#bcd9f0",
+    accentBreak: "#bcd9f0",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#eef4fb",
+  },
+  {
+    id: 12,
+    name: "Winter Cabin — gece (odak 2)",
+    scene: { kind: "cabin", glow: "#ff7e3a", sky: "linear-gradient(180deg,#1d2740,#27324c,#3a4060)" },
+    ambient: "fire",
+    clockScale: 0.7,
+    accentFocus: "#f0ddb6",
+    accentBreak: "#f0ddb6",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#f6efe0",
+  },
+  {
+    id: 13,
+    name: "Winter Cabin — kar molası (mola 2)",
+    scene: { kind: "cabin", glow: "#ffc070", sky: "linear-gradient(180deg,#202b46,#2b3852,#40465f)" },
+    ambient: "fire",
+    clockScale: 0.7,
+    accentFocus: "#a9cdec",
+    accentBreak: "#a9cdec",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#eef4fb",
+  },
+  {
+    id: 14,
+    name: "Winter Cabin — geç gece (odak 3)",
+    scene: { kind: "cabin", glow: "#ff8c46", sky: "linear-gradient(180deg,#161f36,#202a44,#333a58)" },
+    ambient: "fire",
+    clockScale: 0.7,
+    accentFocus: "#f4e6c4",
+    accentBreak: "#f4e6c4",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#f7efe0",
+  },
+  {
+    id: 15,
+    name: "Winter Cabin — kar molası (mola 3)",
+    scene: { kind: "cabin", glow: "#ffcf8a", sky: "linear-gradient(180deg,#1b2540,#26314c,#3b425d)" },
+    ambient: "fire",
+    clockScale: 0.7,
+    accentFocus: "#c2e0f4",
+    accentBreak: "#c2e0f4",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#eef4fb",
   },
 ];

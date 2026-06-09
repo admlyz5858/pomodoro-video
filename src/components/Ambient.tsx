@@ -11,6 +11,7 @@ const TRACKS: Record<AmbientKey, { src: string; vol: number }[]> = {
   ],
   night: [{ src: "crickets.ogg", vol: 0.42 }],
   storm: [{ src: "rain.mp3", vol: 0.62 }],
+  fire: [{ src: "fire.ogg", vol: 0.5 }],
 };
 
 export const Ambient: React.FC<{

@@ -227,6 +227,45 @@ const calcMetaStudy: CalculateMetadataFunction<StudyProps> = ({ props }) => ({
   durationInFrames: Math.max(1, planStudy(props, FPS).total),
 });
 
+/* ---------- Kış kulübesi 3 döngülü seans (yeni tasarım) ---------- */
+
+const studyWinterBase = {
+  cycles: [
+    { focusStyle: 10, breakStyle: 11 },
+    { focusStyle: 12, breakStyle: 13 },
+    { focusStyle: 14, breakStyle: 15 },
+  ],
+  introMain: "STAY WARM, STAY FOCUSED",
+  introSub: "3 × 50 / 10  ·  WINTER STUDY SESSION",
+  outroMain: "WELL DONE",
+  outroSub: "GREAT WORK TODAY  ·  STAY COZY",
+  countdownLabel: "GET READY",
+  focusLabel: "FOCUS",
+  breakLabel: "BREAK",
+  musicFocus: "bg2.mp3",
+  musicBreak: "calm.mp3",
+  musicVolume: 0.6,
+  keepAmbient: true,
+};
+
+const studyWinter: StudyProps = {
+  ...studyWinterBase,
+  countdownSeconds: 10,
+  focusMinutes: 50,
+  breakMinutes: 10,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
+const studyWinterDemo: StudyProps = {
+  ...studyWinterBase,
+  countdownSeconds: 5,
+  focusMinutes: 20 / 60,
+  breakMinutes: 12 / 60,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -246,6 +285,26 @@ export const RemotionRoot: React.FC = () => {
         component={StudySession}
         schema={studySchema}
         defaultProps={studyFull}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyWinter"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyWinter}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyWinterDemo"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyWinterDemo}
         calculateMetadata={calcMetaStudy}
         fps={FPS}
         width={WIDTH}

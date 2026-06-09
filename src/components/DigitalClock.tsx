@@ -25,6 +25,7 @@ interface Props {
   timeWeight?: number;
   letterSpacing?: number;
   pulseLow?: boolean; // son 10 sn'de rakamı vurgula
+  scale?: number; // saatin genel ölçeği
 }
 
 export const DigitalClock: React.FC<Props> = ({
@@ -43,6 +44,7 @@ export const DigitalClock: React.FC<Props> = ({
   timeWeight = 500,
   letterSpacing = 2,
   pulseLow = false,
+  scale = 1,
 }) => {
   const frame = useCurrentFrame();
   const pulse = 0.6 + 0.4 * (0.5 + 0.5 * Math.sin(frame * 0.12));
@@ -83,6 +85,7 @@ export const DigitalClock: React.FC<Props> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+        transform: `scale(${scale})`,
       }}
     >
       {/* Okunabilirlik için yumuşak karartma halesi */}
