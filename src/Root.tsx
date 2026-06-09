@@ -210,8 +210,8 @@ const studyFull: StudyProps = {
   countdownSeconds: 10,
   focusMinutes: 50,
   breakMinutes: 10,
-  introSeconds: 6,
-  outroSeconds: 7,
+  introSeconds: 4,
+  outroSeconds: 5,
 };
 
 const studyDemo: StudyProps = {
