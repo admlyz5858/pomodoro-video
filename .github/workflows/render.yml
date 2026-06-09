@@ -6,8 +6,10 @@ on:
       composition:
         description: "Hangi kompozisyon render edilsin?"
         type: choice
-        default: PomodoroSingleDemo
+        default: StudySessionDemo
         options:
+          - StudySessionDemo
+          - StudySession
           - PomodoroSingleDemo
           - PomodoroSingle
           - PomodoroSeqDemo

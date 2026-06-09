@@ -15,6 +15,7 @@ import {
   singleTimeline,
   SingleProps,
 } from "./PomodoroSingle";
+import { StudySession, studySchema, planStudy, StudyProps } from "./StudySession";
 import { PomodoroSequence } from "./PomodoroSequence";
 import {
   planSequence,
@@ -183,6 +184,49 @@ const calcMetaSingle: CalculateMetadataFunction<SingleProps> = ({ props }) => ({
   durationInFrames: Math.max(1, singleTimeline(props, FPS).total),
 });
 
+/* ---------- 3 döngülü çalışma seansı (50/10 × 3, sayaç + müzik/renk değişimi) ---------- */
+
+const studyBase = {
+  cycles: [
+    { focusStyle: 0, breakStyle: 1 },
+    { focusStyle: 2, breakStyle: 3 },
+    { focusStyle: 5, breakStyle: 7 },
+  ],
+  introMain: "STAY FOCUSED",
+  introSub: "3 × 50 / 10  ·  PUT YOUR PHONE AWAY",
+  outroMain: "WELL DONE",
+  outroSub: "GREAT WORK TODAY  ·  SEE YOU NEXT TIME",
+  countdownLabel: "GET READY",
+  focusLabel: "FOCUS",
+  breakLabel: "BREAK",
+  musicFocus: "bg.mp3",
+  musicBreak: "calm.mp3",
+  musicVolume: 0.6,
+  keepAmbient: true,
+};
+
+const studyFull: StudyProps = {
+  ...studyBase,
+  countdownSeconds: 10,
+  focusMinutes: 50,
+  breakMinutes: 10,
+  introSeconds: 6,
+  outroSeconds: 7,
+};
+
+const studyDemo: StudyProps = {
+  ...studyBase,
+  countdownSeconds: 5,
+  focusMinutes: 20 / 60, // 20 sn
+  breakMinutes: 12 / 60, // 12 sn
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
+const calcMetaStudy: CalculateMetadataFunction<StudyProps> = ({ props }) => ({
+  durationInFrames: Math.max(1, planStudy(props, FPS).total),
+});
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -192,6 +236,27 @@ export const RemotionRoot: React.FC = () => {
         schema={showcaseSchema}
         defaultProps={{ styleId: 0 }}
         durationInFrames={150}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+
+      <Composition
+        id="StudySession"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyFull}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudySessionDemo"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyDemo}
+        calculateMetadata={calcMetaStudy}
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}

@@ -24,6 +24,7 @@ interface Props {
   timeSize?: number;
   timeWeight?: number;
   letterSpacing?: number;
+  pulseLow?: boolean; // son 10 sn'de rakamı vurgula
 }
 
 export const DigitalClock: React.FC<Props> = ({
@@ -41,9 +42,17 @@ export const DigitalClock: React.FC<Props> = ({
   timeSize = 270,
   timeWeight = 500,
   letterSpacing = 2,
+  pulseLow = false,
 }) => {
   const frame = useCurrentFrame();
   const pulse = 0.6 + 0.4 * (0.5 + 0.5 * Math.sin(frame * 0.12));
+
+  // Son 10 saniye vurgusu: her saniye nabız + renk accent'e kayar
+  const low = pulseLow && seconds <= 10 && seconds > 0;
+  const beat = low
+    ? 1 + 0.08 * Math.max(0, Math.cos((frame % 30) * (Math.PI / 15)))
+    : 1;
+  const timeCol = low ? accent : textColor;
 
   const dots = [];
   if (showDots) {
@@ -124,12 +133,14 @@ export const DigitalClock: React.FC<Props> = ({
           fontWeight: timeWeight,
           fontSize: timeSize,
           lineHeight: 1,
-          color: textColor,
+          color: timeCol,
           fontVariantNumeric: "tabular-nums",
           letterSpacing,
-          textShadow:
-            "0 4px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,255,255,0.08)",
+          textShadow: low
+            ? `0 4px 60px rgba(0,0,0,0.6), 0 0 50px ${accent}88`
+            : "0 4px 60px rgba(0,0,0,0.6), 0 0 40px rgba(255,255,255,0.08)",
           position: "relative",
+          transform: `scale(${beat})`,
         }}
       >
         {fmt(Math.max(0, seconds))}

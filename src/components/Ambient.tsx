@@ -4,13 +4,13 @@ import { AmbientKey } from "../themes";
 
 // Sahneye uygun ortam sesi parçaları (loop + segment başı/sonu fade).
 const TRACKS: Record<AmbientKey, { src: string; vol: number }[]> = {
-  rain: [{ src: "music.mp3", vol: 0.5 }],
+  rain: [{ src: "rain.mp3", vol: 0.5 }],
   forest: [
     { src: "birds.ogg", vol: 0.5 },
     { src: "water.ogg", vol: 0.32 },
   ],
   night: [{ src: "crickets.ogg", vol: 0.42 }],
-  storm: [{ src: "music.mp3", vol: 0.62 }],
+  storm: [{ src: "rain.mp3", vol: 0.62 }],
 };
 
 export const Ambient: React.FC<{
