@@ -14,7 +14,7 @@ const rand = (seed: number) => {
   return x - Math.floor(x);
 };
 
-const RAIN_COUNT = 140;
+const RAIN_COUNT = 70;
 
 const Rain: React.FC = () => {
   const frame = useCurrentFrame();

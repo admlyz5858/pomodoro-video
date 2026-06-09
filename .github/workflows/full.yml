@@ -7,16 +7,23 @@ jobs:
   render:
     strategy:
       fail-fast: false
+      max-parallel: 6
       matrix:
         include:
-          - { idx: 0, frames: "0-54094" }
-          - { idx: 1, frames: "54095-108189" }
-          - { idx: 2, frames: "108190-162284" }
-          - { idx: 3, frames: "162285-216379" }
-          - { idx: 4, frames: "216380-270474" }
-          - { idx: 5, frames: "270475-324569" }
+          - { idx: 0, frames: "0-27047" }
+          - { idx: 1, frames: "27048-54095" }
+          - { idx: 2, frames: "54096-81143" }
+          - { idx: 3, frames: "81144-108191" }
+          - { idx: 4, frames: "108192-135239" }
+          - { idx: 5, frames: "135240-162287" }
+          - { idx: 6, frames: "162288-189335" }
+          - { idx: 7, frames: "189336-216383" }
+          - { idx: 8, frames: "216384-243431" }
+          - { idx: 9, frames: "243432-270479" }
+          - { idx: 10, frames: "270480-297527" }
+          - { idx: 11, frames: "297528-324569" }
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,7 +37,7 @@ jobs:
         run: |
           mkdir -p out
           npx remotion render StudySession "out/chunk-${{ matrix.idx }}.mp4" \
-            --frames=${{ matrix.frames }} --log=verbose
+            --frames=${{ matrix.frames }} --concurrency=2 --log=verbose
       - uses: actions/upload-artifact@v4
         with:
           name: chunk-${{ matrix.idx }}
@@ -51,7 +58,7 @@ jobs:
         run: |
           ls -R chunks
           : > list.txt
-          for i in 0 1 2 3 4 5; do
+          for i in 0 1 2 3 4 5 6 7 8 9 10 11; do
             echo "file 'chunks/chunk-$i/chunk-$i.mp4'" >> list.txt
           done
           cat list.txt

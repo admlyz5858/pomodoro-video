@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { rand, rand2 } from "../lib/rand";
 
-const STAR_COUNT = 70;
+const STAR_COUNT = 45;
 
 // Gece gökyüzü: derin mavi-teal degrade + ay parıltısı + parıldayan yıldızlar.
 export const NightSky: React.FC = () => {

@@ -3,8 +3,8 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { rand, rand2 } from "../lib/rand";
 
 const GLASS_BOTTOM = 0.7;
-const RUNNERS = 16;
-const SPECKS = 70;
+const RUNNERS = 10;
+const SPECKS = 30;
 
 // Camın YÜZEYİNDE: yavaşça aşağı süzülen, iz bırakan damlalar + duran zerreler.
 export const GlassDrops: React.FC = () => {

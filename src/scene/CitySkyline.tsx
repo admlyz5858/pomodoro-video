@@ -38,8 +38,8 @@ const BuildingLayer: React.FC<BuildingLayerProps> = ({
 
     // Bina pencereleri
     const wins = [];
-    const cols = Math.max(2, Math.floor(w / 26));
-    const rows = Math.max(2, Math.floor(h / 34));
+    const cols = Math.max(2, Math.floor(w / 44));
+    const rows = Math.max(2, Math.floor(h / 50));
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const ws = s * 13.3 + r * 7.1 + c * 3.7;
@@ -111,7 +111,7 @@ export const CitySkyline: React.FC = () => {
     <AbsoluteFill>
       {/* Uzak kule sırası */}
       <BuildingLayer
-        count={22}
+        count={12}
         seedBase={100}
         baseColor="#0b1622"
         minHeight={120}
@@ -123,7 +123,7 @@ export const CitySkyline: React.FC = () => {
       />
       {/* Yakın kule sırası */}
       <BuildingLayer
-        count={14}
+        count={9}
         seedBase={500}
         baseColor="#070d15"
         minHeight={180}

@@ -4,7 +4,7 @@ import { rand, rand2 } from "../lib/rand";
 
 // Camın ARDINDA düşen yağmur — hafif bulanık, mavimsi, derinlik hissi.
 // Sadece cam alanında (üst ~%70) görünür.
-const COUNT = 130;
+const COUNT = 60;
 const GLASS_BOTTOM = 0.7; // cam alanının alt sınırı (oran)
 
 export const OutsideRain: React.FC = () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { rand, rand2 } from "../lib/rand";
 
-const COUNT = 26;
+const COUNT = 14;
 
 // Yumuşak, sıcak ışık zerreleri — yavaşça yukarı süzülür, nefes alır.
 export const Bokeh: React.FC<{ tint?: string }> = ({ tint = "#ffce8a" }) => {
