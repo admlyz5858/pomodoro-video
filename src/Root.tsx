@@ -9,6 +9,7 @@ import {
   timeline25,
 } from "./pomodoro25Schema";
 import { Showcase, showcaseSchema } from "./Showcase";
+import { Banner } from "./Banner";
 import {
   PomodoroSingle,
   singleSchema,
@@ -328,6 +329,15 @@ const studyClipDemo: StudyProps = {
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Composition
+        id="Banner"
+        component={Banner}
+        durationInFrames={1}
+        fps={FPS}
+        width={2560}
+        height={1440}
+      />
+
       <Composition
         id="Showcase"
         component={Showcase}
