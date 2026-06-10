@@ -275,8 +275,8 @@ const studyRealBase = {
     { focusStyle: 16, breakStyle: 17 },
     { focusStyle: 16, breakStyle: 17 },
   ],
-  introMain: "STAY WARM, STAY FOCUSED",
-  introSub: "3 × 50 / 10  ·  COZY FIREPLACE SESSION",
+  introMain: "STAY FOCUSED",
+  introSub: "3 × 50 / 10  ·  DEEP FOCUS SESSION",
 };
 
 const studyReal: StudyProps = {
