@@ -11,3 +11,6 @@ out
 *.mp4
 artifact_demo/
 artifact_full/
+
+# kaynak video klipleri dahil et
+!public/*.mp4
