@@ -266,6 +266,37 @@ const studyWinterDemo: StudyProps = {
   outroSeconds: 5,
 };
 
+/* ---------- Gerçek görüntü (cozy şömine) 3 döngü ---------- */
+
+const studyRealBase = {
+  ...studyWinterBase,
+  cycles: [
+    { focusStyle: 16, breakStyle: 17 },
+    { focusStyle: 16, breakStyle: 17 },
+    { focusStyle: 16, breakStyle: 17 },
+  ],
+  introMain: "STAY WARM, STAY FOCUSED",
+  introSub: "3 × 50 / 10  ·  COZY FIREPLACE SESSION",
+};
+
+const studyReal: StudyProps = {
+  ...studyRealBase,
+  countdownSeconds: 10,
+  focusMinutes: 50,
+  breakMinutes: 10,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
+const studyRealDemo: StudyProps = {
+  ...studyRealBase,
+  countdownSeconds: 5,
+  focusMinutes: 20 / 60,
+  breakMinutes: 12 / 60,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -305,6 +336,26 @@ export const RemotionRoot: React.FC = () => {
         component={StudySession}
         schema={studySchema}
         defaultProps={studyWinterDemo}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyReal"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyReal}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyRealDemo"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyRealDemo}
         calculateMetadata={calcMetaStudy}
         fps={FPS}
         width={WIDTH}

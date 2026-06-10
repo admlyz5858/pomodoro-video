@@ -6,7 +6,8 @@ export type SceneSpec =
   | { kind: "cozy"; tint?: string }
   | { kind: "forest" }
   | { kind: "gradient"; props: GradientSceneProps }
-  | { kind: "cabin"; glow?: string; sky?: string };
+  | { kind: "cabin"; glow?: string; sky?: string }
+  | { kind: "video"; src: string; scrim?: number };
 
 // Sahneye uygun ortam sesi
 export type AmbientKey = "rain" | "forest" | "night" | "storm" | "fire";
@@ -280,6 +281,34 @@ export const THEMES: Theme[] = [
     clockScale: 0.7,
     accentFocus: "#c2e0f4",
     accentBreak: "#c2e0f4",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#eef4fb",
+  },
+
+  /* ---- Gerçek görüntü: cozy şömine ---- */
+  {
+    id: 16,
+    name: "Real Fireplace — odak",
+    scene: { kind: "video", src: "fire-2707.mp4", scrim: 0.42 },
+    ambient: "fire",
+    clockScale: 0.66,
+    accentFocus: "#ffd9a0",
+    accentBreak: "#ffd9a0",
+    font: "serif",
+    ring: "around",
+    showDots: true,
+    textColor: "#fbf3e6",
+  },
+  {
+    id: 17,
+    name: "Real Fireplace — mola",
+    scene: { kind: "video", src: "fire-2707.mp4", scrim: 0.5 },
+    ambient: "fire",
+    clockScale: 0.66,
+    accentFocus: "#bcd9f0",
+    accentBreak: "#bcd9f0",
     font: "serif",
     ring: "around",
     showDots: true,
