@@ -10,13 +10,14 @@ import {
 } from "remotion";
 import { z } from "zod";
 import { SceneFor } from "./scene/SceneFor";
+import { RealScene } from "./scene/RealScene";
 import { DigitalClock } from "./components/DigitalClock";
 import { ThemedCountdown } from "./components/ThemedCountdown";
 import { TitleCard } from "./components/TitleCard";
 import { Ambient } from "./components/Ambient";
 import { Lightning } from "./components/Lightning";
 import { fontByKey } from "./fonts";
-import { THEMES } from "./themes";
+import { THEMES, AmbientKey } from "./themes";
 
 export const studySchema = z.object({
   cycles: z.array(z.object({ focusStyle: z.number(), breakStyle: z.number() })),
@@ -36,8 +37,21 @@ export const studySchema = z.object({
   musicBreak: z.string(),
   musicVolume: z.number(),
   keepAmbient: z.boolean(),
+  // Opsiyonel: gerçek video arka planı (tüm bloklarda). Boşsa tema sahnesi kullanılır.
+  videoSrc: z.string().optional(),
+  videoLoopFrames: z.number().optional(),
+  videoScrim: z.number().optional(),
+  ambientKey: z.string().optional(), // tüm bloklarda ortam sesini değiştir
 });
 export type StudyProps = z.infer<typeof studySchema>;
+
+type VideoBg = { src: string; loopFrames?: number; scrim?: number };
+const sceneEl = (styleId: number, video?: VideoBg) =>
+  video ? (
+    <RealScene src={video.src} loopFrames={video.loopFrames} scrim={video.scrim} />
+  ) : (
+    <SceneFor styleId={styleId} />
+  );
 
 export const planStudy = (p: StudyProps, fps: number) => {
   const introDur = Math.round(p.introSeconds * fps);
@@ -121,19 +135,22 @@ const TimerBlock: React.FC<{
   music: string;
   musicVolume: number;
   keepAmbient: boolean;
-}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient }) => {
+  video?: VideoBg;
+  ambientOverride?: string;
+}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = THEMES[style] ?? THEMES[0];
+  const amb = (ambientOverride ?? theme.ambient) as AmbientKey;
   const seconds = Math.max(0, totalSeconds - Math.floor(frame / fps));
   const progress = Math.min(1, frame / phaseFrames);
 
   return (
     <AbsoluteFill style={{ opacity: blockFade(frame, phaseFrames, fps) }}>
-      <SceneFor styleId={style} />
-      {theme.ambient === "storm" ? <Lightning phaseFrames={phaseFrames} /> : null}
+      {sceneEl(style, video)}
+      {amb === "storm" ? <Lightning phaseFrames={phaseFrames} /> : null}
       {keepAmbient ? (
-        <Ambient ambient={theme.ambient} phaseFrames={phaseFrames} gain={music ? 0.6 : 1} />
+        <Ambient ambient={amb} phaseFrames={phaseFrames} gain={music ? 0.6 : 1} />
       ) : null}
       {music ? (
         <Audio src={staticFile(music)} loop volume={(f) => musicFade(f, phaseFrames, fps, musicVolume)} />
@@ -170,16 +187,19 @@ const CountdownBlock: React.FC<{
   music: string;
   musicVolume: number;
   keepAmbient: boolean;
-}> = ({ style, phaseFrames, label, music, musicVolume, keepAmbient }) => {
+  video?: VideoBg;
+  ambientOverride?: string;
+}> = ({ style, phaseFrames, label, music, musicVolume, keepAmbient, video, ambientOverride }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = THEMES[style] ?? THEMES[0];
+  const amb = (ambientOverride ?? theme.ambient) as AmbientKey;
   return (
     <AbsoluteFill style={{ opacity: blockFade(frame, phaseFrames, fps) }}>
-      <SceneFor styleId={style} />
-      {theme.ambient === "storm" ? <Lightning phaseFrames={phaseFrames} /> : null}
+      {sceneEl(style, video)}
+      {amb === "storm" ? <Lightning phaseFrames={phaseFrames} /> : null}
       {keepAmbient ? (
-        <Ambient ambient={theme.ambient} phaseFrames={phaseFrames} gain={music ? 0.6 : 1} />
+        <Ambient ambient={amb} phaseFrames={phaseFrames} gain={music ? 0.6 : 1} />
       ) : null}
       {music ? (
         <Audio src={staticFile(music)} loop volume={(f) => musicFade(f, phaseFrames, fps, musicVolume)} />
@@ -201,6 +221,9 @@ export const StudySession: React.FC<StudyProps> = (p) => {
   const { fps } = useVideoConfig();
   const plan = planStudy(p, fps);
   const sessionTotal = p.cycles.length;
+  const video: VideoBg | undefined = p.videoSrc
+    ? { src: p.videoSrc, loopFrames: p.videoLoopFrames, scrim: p.videoScrim }
+    : undefined;
 
   return (
     <AbsoluteFill style={{ backgroundColor: "#05080d" }}>
@@ -217,7 +240,7 @@ export const StudySession: React.FC<StudyProps> = (p) => {
         if (ph.type === "countdown") {
           return (
             <Sequence key={i} from={ph.from} durationInFrames={ph.dur}>
-              <CountdownBlock style={ph.style} phaseFrames={ph.dur} label={p.countdownLabel} music={p.musicFocus} musicVolume={p.musicVolume} keepAmbient={p.keepAmbient} />
+              <CountdownBlock style={ph.style} phaseFrames={ph.dur} label={p.countdownLabel} music={p.musicFocus} musicVolume={p.musicVolume} keepAmbient={p.keepAmbient} video={video} ambientOverride={p.ambientKey} />
             </Sequence>
           );
         }
@@ -236,6 +259,8 @@ export const StudySession: React.FC<StudyProps> = (p) => {
                 music={isFocus ? p.musicFocus : p.musicBreak}
                 musicVolume={p.musicVolume}
                 keepAmbient={p.keepAmbient}
+                video={video}
+                ambientOverride={p.ambientKey}
               />
             </Sequence>
           );

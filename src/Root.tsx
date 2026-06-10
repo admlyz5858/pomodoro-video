@@ -297,6 +297,34 @@ const studyRealDemo: StudyProps = {
   outroSeconds: 5,
 };
 
+/* ---------- Parametreli gerçek-klip (her klip --props ile) ---------- */
+
+const studyClipBase = {
+  ...studyRealBase,
+  videoSrc: "real1.mp4",
+  videoLoopFrames: 1791,
+  videoScrim: 0.4,
+  ambientKey: "fire",
+};
+
+const studyClip: StudyProps = {
+  ...studyClipBase,
+  countdownSeconds: 10,
+  focusMinutes: 50,
+  breakMinutes: 10,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
+const studyClipDemo: StudyProps = {
+  ...studyClipBase,
+  countdownSeconds: 5,
+  focusMinutes: 20 / 60,
+  breakMinutes: 12 / 60,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -356,6 +384,26 @@ export const RemotionRoot: React.FC = () => {
         component={StudySession}
         schema={studySchema}
         defaultProps={studyRealDemo}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyClip"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyClip}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyClipDemo"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyClipDemo}
         calculateMetadata={calcMetaStudy}
         fps={FPS}
         width={WIDTH}

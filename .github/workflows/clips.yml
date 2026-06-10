@@ -1,0 +1,40 @@
+name: Render Clip Demos
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  demo:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { idx: 1, props: '{"videoSrc":"real1.mp4","videoLoopFrames":1791,"videoScrim":0.4,"ambientKey":"fire"}' }
+          - { idx: 2, props: '{"videoSrc":"real2.mp4","videoLoopFrames":2393,"videoScrim":0.42,"ambientKey":"fire"}' }
+          - { idx: 3, props: '{"videoSrc":"real3.mp4","videoLoopFrames":900,"videoScrim":0.42,"ambientKey":"fire"}' }
+          - { idx: 4, props: '{"videoSrc":"real4.mp4","videoLoopFrames":1774,"videoScrim":0.4,"ambientKey":"rain"}' }
+          - { idx: 5, props: '{"videoSrc":"real5.mp4","videoLoopFrames":1799,"videoScrim":0.45,"ambientKey":"rain"}' }
+          - { idx: 6, props: '{"videoSrc":"real6.mp4","videoLoopFrames":276,"videoScrim":0.36,"ambientKey":"rain"}' }
+          - { idx: 7, props: '{"videoSrc":"real7.mp4","videoLoopFrames":276,"videoScrim":0.36,"ambientKey":"rain"}' }
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chrome Headless Shell
+        run: npx remotion browser ensure
+      - name: Render clip ${{ matrix.idx }} demo
+        run: |
+          mkdir -p out
+          npx remotion render StudyClipDemo "out/clip-${{ matrix.idx }}.mp4" \
+            --props='${{ matrix.props }}' --log=verbose
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clipdemo-${{ matrix.idx }}
+          path: out/clip-${{ matrix.idx }}.mp4
+          retention-days: 7
+          if-no-files-found: error

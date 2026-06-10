@@ -291,7 +291,7 @@ export const THEMES: Theme[] = [
   {
     id: 16,
     name: "Real Fireplace — odak",
-    scene: { kind: "video", src: "fire-2707.mp4", scrim: 0.42 },
+    scene: { kind: "video", src: "real1.mp4", scrim: 0.42 },
     ambient: "fire",
     clockScale: 0.66,
     accentFocus: "#ffd9a0",
@@ -304,7 +304,7 @@ export const THEMES: Theme[] = [
   {
     id: 17,
     name: "Real Fireplace — mola",
-    scene: { kind: "video", src: "fire-2707.mp4", scrim: 0.5 },
+    scene: { kind: "video", src: "real1.mp4", scrim: 0.5 },
     ambient: "fire",
     clockScale: 0.66,
     accentFocus: "#bcd9f0",
