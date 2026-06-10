@@ -1,0 +1,104 @@
+name: Render Full Clip
+
+on:
+  workflow_dispatch:
+    inputs:
+      clip:
+        description: "Klip (1-7)"
+        type: choice
+        options: ["1", "2", "3", "4", "5", "6", "7"]
+      mode:
+        description: "Pomodoro modu"
+        type: choice
+        options: ["pomo50", "pomo25"]
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.mk.outputs.matrix }}
+      props: ${{ steps.mk.outputs.props }}
+      chunks: ${{ steps.mk.outputs.chunks }}
+    steps:
+      - id: mk
+        run: |
+          CLIP="${{ inputs.clip }}"; MODE="${{ inputs.mode }}"
+          case "$CLIP" in
+            1) SRC=real1.mp4; LF=1791; SCRIM=0.4;  AMB=fire;;
+            2) SRC=real2.mp4; LF=2393; SCRIM=0.42; AMB=fire;;
+            3) SRC=real3.mp4; LF=900;  SCRIM=0.42; AMB=fire;;
+            4) SRC=real4.mp4; LF=1774; SCRIM=0.4;  AMB=rain;;
+            5) SRC=real5.mp4; LF=1799; SCRIM=0.45; AMB=rain;;
+            6) SRC=real6.mp4; LF=276;  SCRIM=0.36; AMB=rain;;
+            7) SRC=real7.mp4; LF=276;  SCRIM=0.36; AMB=rain;;
+          esac
+          if [ "$MODE" = "pomo50" ]; then TOTAL=324570; FM=50; BM=10; else TOTAL=162570; FM=25; BM=5; fi
+          PROPS="{\"videoSrc\":\"$SRC\",\"videoLoopFrames\":$LF,\"videoScrim\":$SCRIM,\"ambientKey\":\"$AMB\",\"focusMinutes\":$FM,\"breakMinutes\":$BM}"
+          node -e "
+            const t=$TOTAL, c=16200, a=[];
+            for (let i=0, s=0; s<t; i++, s+=c) a.push({idx:i, frames: s+'-'+Math.min(s+c-1, t-1)});
+            console.log('matrix='+JSON.stringify({include:a}));
+            console.log('chunks='+a.length);
+          " >> "$GITHUB_OUTPUT"
+          echo "props=$PROPS" >> "$GITHUB_OUTPUT"
+
+  render:
+    needs: plan
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 110
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chrome Headless Shell
+        run: npx remotion browser ensure
+      - name: Render chunk ${{ matrix.idx }} (${{ matrix.frames }})
+        run: |
+          mkdir -p out
+          npx remotion render StudyClip "out/chunk-${{ matrix.idx }}.mp4" \
+            --frames=${{ matrix.frames }} \
+            --props='${{ needs.plan.outputs.props }}' \
+            --concurrency=2 --log=verbose
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chunk-${{ matrix.idx }}
+          path: out/chunk-${{ matrix.idx }}.mp4
+          retention-days: 7
+          if-no-files-found: error
+
+  merge:
+    needs: [plan, render]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/download-artifact@v4
+        with:
+          path: chunks
+      - name: Concatenate
+        run: |
+          N=${{ needs.plan.outputs.chunks }}
+          : > list.txt
+          i=0
+          while [ $i -lt $N ]; do
+            echo "file 'chunks/chunk-$i/chunk-$i.mp4'" >> list.txt
+            i=$((i+1))
+          done
+          cat list.txt
+          ffmpeg -y -f concat -safe 0 -i list.txt -c copy "clip${{ inputs.clip }}-${{ inputs.mode }}.mp4"
+          ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 "clip${{ inputs.clip }}-${{ inputs.mode }}.mp4" || true
+          ls -la "clip${{ inputs.clip }}-${{ inputs.mode }}.mp4"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: clip${{ inputs.clip }}-${{ inputs.mode }}
+          path: clip${{ inputs.clip }}-${{ inputs.mode }}.mp4
+          retention-days: 7
+          if-no-files-found: error

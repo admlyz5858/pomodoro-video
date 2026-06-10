@@ -137,7 +137,8 @@ const TimerBlock: React.FC<{
   keepAmbient: boolean;
   video?: VideoBg;
   ambientOverride?: string;
-}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride }) => {
+  ambientGain?: number; // sahne sesi seviyesi (odak: çok kısık)
+}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride, ambientGain }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = THEMES[style] ?? THEMES[0];
@@ -150,7 +151,11 @@ const TimerBlock: React.FC<{
       {sceneEl(style, video)}
       {amb === "storm" ? <Lightning phaseFrames={phaseFrames} /> : null}
       {keepAmbient ? (
-        <Ambient ambient={amb} phaseFrames={phaseFrames} gain={music ? 0.6 : 1} />
+        <Ambient
+          ambient={amb}
+          phaseFrames={phaseFrames}
+          gain={ambientGain ?? (music ? 0.6 : 1)}
+        />
       ) : null}
       {music ? (
         <Audio src={staticFile(music)} loop volume={(f) => musicFade(f, phaseFrames, fps, musicVolume)} />
@@ -232,7 +237,24 @@ export const StudySession: React.FC<StudyProps> = (p) => {
         if (ph.type === "intro") {
           return (
             <Sequence key={i} from={ph.from} durationInFrames={ph.dur}>
-              <Ambient ambient={theme.ambient} phaseFrames={ph.dur} gain={0.5} />
+              <Ambient
+                ambient={(p.ambientKey ?? theme.ambient) as AmbientKey}
+                phaseFrames={ph.dur}
+                gain={0.5}
+              />
+              {p.musicFocus ? (
+                <Audio
+                  src={staticFile(p.musicFocus)}
+                  volume={(f) =>
+                    interpolate(
+                      f,
+                      [0, 0.8 * fps, Math.max(0.8 * fps, ph.dur - 0.5 * fps), ph.dur],
+                      [0, p.musicVolume, p.musicVolume, p.musicVolume * 0.8],
+                      { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+                    )
+                  }
+                />
+              ) : null}
               <TitleCard main={p.introMain} sub={p.introSub} accent={theme.accentFocus} durationInFrames={ph.dur} />
             </Sequence>
           );
@@ -256,11 +278,12 @@ export const StudySession: React.FC<StudyProps> = (p) => {
                 accent={isFocus ? theme.accentFocus : theme.accentBreak}
                 session={ph.session}
                 sessionTotal={sessionTotal}
-                music={isFocus ? p.musicFocus : p.musicBreak}
+                music={isFocus ? "" : p.musicBreak}
                 musicVolume={p.musicVolume}
                 keepAmbient={p.keepAmbient}
                 video={video}
                 ambientOverride={p.ambientKey}
+                ambientGain={isFocus ? 0.45 : 0.6}
               />
             </Sequence>
           );
