@@ -1,0 +1,48 @@
+name: Repack Clip (transcode small)
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Kaynak render run id (chunk-* artifact'leri olan)"
+        type: string
+      name:
+        description: "Çıktı adı (örn quote-q1)"
+        type: string
+
+jobs:
+  repack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Download chunk artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh run download "${{ inputs.run_id }}" -D chunks -p 'chunk-*'
+          ls -R chunks | head -50
+      - name: Concat + transcode (küçük dosya)
+        run: |
+          : > list.txt
+          i=0
+          while [ -f "chunks/chunk-$i/chunk-$i.mp4" ]; do
+            echo "file 'chunks/chunk-$i/chunk-$i.mp4'" >> list.txt
+            i=$((i+1))
+          done
+          echo "toplam parça: $i"
+          cat list.txt
+          ffmpeg -y -f concat -safe 0 -i list.txt \
+            -c:v libx264 -preset medium -crf 25 -maxrate 1700k -bufsize 3400k \
+            -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart \
+            "${{ inputs.name }}-small.mp4"
+          ls -la "${{ inputs.name }}-small.mp4"
+          ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 "${{ inputs.name }}-small.mp4" || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.name }}-small
+          path: ${{ inputs.name }}-small.mp4
+          retention-days: 7
+          if-no-files-found: error
