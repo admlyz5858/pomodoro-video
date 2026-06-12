@@ -14,3 +14,4 @@ artifact_full/
 
 # kaynak video klipleri dahil et
 !public/*.mp4
+frames-tmp/

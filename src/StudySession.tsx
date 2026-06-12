@@ -12,6 +12,8 @@ import { z } from "zod";
 import { SceneFor } from "./scene/SceneFor";
 import { RealScene } from "./scene/RealScene";
 import { DigitalClock } from "./components/DigitalClock";
+import { CornerTimer } from "./components/CornerTimer";
+import { QuoteOverlay } from "./components/QuoteOverlay";
 import { ThemedCountdown } from "./components/ThemedCountdown";
 import { TitleCard } from "./components/TitleCard";
 import { Ambient } from "./components/Ambient";
@@ -42,6 +44,14 @@ export const studySchema = z.object({
   videoLoopFrames: z.number().optional(),
   videoScrim: z.number().optional(),
   ambientKey: z.string().optional(), // tüm bloklarda ortam sesini değiştir
+  // Köşe sayaç + motivasyon mesajı katmanı
+  cornerTimer: z.boolean().optional(), // büyük merkez saat yerine köşe sayaç
+  accentColor: z.string().optional(), // klibin baskın rengi (sayaç + mesaj vurgusu)
+  quotes: z.array(z.string()).optional(), // odak motivasyon havuzu
+  breakQuotes: z.array(z.string()).optional(), // mola mesajları
+  quoteFirstSeconds: z.number().optional(), // odakta ilk mesaj zamanı
+  quoteEverySeconds: z.number().optional(), // sonraki mesaj aralığı
+  quoteHoldSeconds: z.number().optional(), // mesaj ekranda kalma süresi
 });
 export type StudyProps = z.infer<typeof studySchema>;
 
@@ -92,6 +102,23 @@ export const planStudy = (p: StudyProps, fps: number) => {
   return { introDur, outroDur, cd, focus, brk, phases, outroFrom, total: cursor };
 };
 
+// Odak fazı içinde mesaj başlangıç frame'leri: ilk@firstS, sonra her everyS,
+// son mesajın tamamlanması faz sonundan önce bitsin diye güvenli sınır.
+const buildFocusTimes = (
+  phaseFrames: number,
+  fps: number,
+  firstS: number,
+  everyS: number,
+  holdS: number,
+) => {
+  const itemS = 1.2 + holdS + 1.5;
+  const limitS = phaseFrames / fps - itemS - 4;
+  const ts: number[] = [];
+  if (firstS <= limitS) ts.push(Math.round(firstS * fps));
+  for (let s = everyS; s <= limitS; s += everyS) ts.push(Math.round(s * fps));
+  return ts;
+};
+
 const musicFade = (f: number, total: number, fps: number, vol: number) =>
   interpolate(f, [0, 1 * fps, total - 1 * fps, total], [0, vol, vol, 0], {
     extrapolateLeft: "clamp",
@@ -138,13 +165,20 @@ const TimerBlock: React.FC<{
   video?: VideoBg;
   ambientOverride?: string;
   ambientGain?: number; // sahne sesi seviyesi (odak: çok kısık)
-}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride, ambientGain }) => {
+  cornerTimer?: boolean;
+  accentColor?: string; // köşe sayaç + mesaj vurgusu
+  quotes?: string[];
+  quoteTimes?: number[];
+  quoteOffset?: number;
+  quoteHoldSeconds?: number;
+}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride, ambientGain, cornerTimer, accentColor, quotes, quoteTimes, quoteOffset, quoteHoldSeconds }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = THEMES[style] ?? THEMES[0];
   const amb = (ambientOverride ?? theme.ambient) as AmbientKey;
   const seconds = Math.max(0, totalSeconds - Math.floor(frame / fps));
   const progress = Math.min(1, frame / phaseFrames);
+  const clockAccent = cornerTimer ? accentColor ?? accent : accent;
 
   return (
     <AbsoluteFill style={{ opacity: blockFade(frame, phaseFrames, fps) }}>
@@ -162,25 +196,46 @@ const TimerBlock: React.FC<{
       ) : null}
       <LastTicks phaseFrames={phaseFrames} />
 
-      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
-        <DigitalClock
-          seconds={seconds}
-          progress={progress}
-          label={label}
-          accent={accent}
-          sessionTotal={sessionTotal}
-          sessionCurrent={session}
-          timeFont={fontByKey[theme.font]}
-          ringMode={theme.ring}
-          showDots={theme.showDots}
-          textColor={theme.textColor}
-          timeSize={theme.timeSize}
-          timeWeight={theme.timeWeight}
-          letterSpacing={theme.letterSpacing}
-          scale={theme.clockScale ?? 1}
-          pulseLow
-        />
-      </AbsoluteFill>
+      {cornerTimer ? (
+        <>
+          <CornerTimer
+            seconds={seconds}
+            label={label}
+            accent={clockAccent}
+            sessionTotal={sessionTotal}
+            sessionCurrent={session}
+          />
+          {quotes && quotes.length && quoteTimes && quoteTimes.length ? (
+            <QuoteOverlay
+              quotes={quotes}
+              times={quoteTimes}
+              offset={quoteOffset ?? 0}
+              accent={clockAccent}
+              holdSeconds={quoteHoldSeconds ?? 8}
+            />
+          ) : null}
+        </>
+      ) : (
+        <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+          <DigitalClock
+            seconds={seconds}
+            progress={progress}
+            label={label}
+            accent={accent}
+            sessionTotal={sessionTotal}
+            sessionCurrent={session}
+            timeFont={fontByKey[theme.font]}
+            ringMode={theme.ring}
+            showDots={theme.showDots}
+            textColor={theme.textColor}
+            timeSize={theme.timeSize}
+            timeWeight={theme.timeWeight}
+            letterSpacing={theme.letterSpacing}
+            scale={theme.clockScale ?? 1}
+            pulseLow
+          />
+        </AbsoluteFill>
+      )}
     </AbsoluteFill>
   );
 };
@@ -230,6 +285,22 @@ export const StudySession: React.FC<StudyProps> = (p) => {
     ? { src: p.videoSrc, loopFrames: p.videoLoopFrames, scrim: p.videoScrim }
     : undefined;
 
+  // Motivasyon mesajı zamanlamaları (köşe sayaç modunda)
+  const focusTimes = p.cornerTimer
+    ? buildFocusTimes(
+        plan.focus,
+        fps,
+        p.quoteFirstSeconds ?? 90,
+        p.quoteEverySeconds ?? 600,
+        p.quoteHoldSeconds ?? 8,
+      )
+    : [];
+  const brkSeconds = plan.brk / fps;
+  const breakTimes =
+    p.cornerTimer && (p.breakQuotes?.length ?? 0) > 0 && brkSeconds > 30
+      ? [Math.round(Math.min(20, brkSeconds * 0.12) * fps)]
+      : [];
+
   return (
     <AbsoluteFill style={{ backgroundColor: "#05080d" }}>
       {plan.phases.map((ph, i) => {
@@ -268,6 +339,7 @@ export const StudySession: React.FC<StudyProps> = (p) => {
         }
         if (ph.type === "focus" || ph.type === "break") {
           const isFocus = ph.type === "focus";
+          const cycleIdx = isFocus ? ph.session : ph.session - 1;
           return (
             <Sequence key={i} from={ph.from} durationInFrames={ph.dur}>
               <TimerBlock
@@ -284,6 +356,12 @@ export const StudySession: React.FC<StudyProps> = (p) => {
                 video={video}
                 ambientOverride={p.ambientKey}
                 ambientGain={isFocus ? 0.45 : 0.6}
+                cornerTimer={p.cornerTimer}
+                accentColor={p.accentColor}
+                quotes={isFocus ? p.quotes : p.breakQuotes}
+                quoteTimes={isFocus ? focusTimes : breakTimes}
+                quoteOffset={isFocus ? cycleIdx * focusTimes.length : cycleIdx}
+                quoteHoldSeconds={p.quoteHoldSeconds}
               />
             </Sequence>
           );

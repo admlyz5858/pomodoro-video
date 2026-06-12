@@ -1,0 +1,29 @@
+name: Render Quote Demo
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Chrome Headless Shell
+        run: npx remotion browser ensure
+      - name: Render StudyQuoteDemo
+        run: |
+          mkdir -p out
+          npx remotion render StudyQuoteDemo "out/quote-demo.mp4" \
+            --concurrency=2 --log=verbose
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quote-demo
+          path: out/quote-demo.mp4
+          retention-days: 7
+          if-no-files-found: error

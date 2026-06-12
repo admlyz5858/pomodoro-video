@@ -326,6 +326,80 @@ const studyClipDemo: StudyProps = {
   outroSeconds: 5,
 };
 
+/* ---------- Köşe sayaç + motivasyon mesajlı klip (yeni konsept, İngilizce) ---------- */
+
+const FOCUS_QUOTES = [
+  "The first ten minutes are behind you — you've found your rhythm.",
+  "When you give your full attention to one thing, time works for you.",
+  "The moment it feels hard is the moment you grow. Keep going.",
+  "The phone can wait. This moment, this line — only you.",
+  "Small, steady steps finish the biggest work.",
+  "Success isn't talent; it's staying in this chair.",
+  "Every minute lays one more brick toward your goal.",
+  "Tiredness is temporary; the peace of finishing stays.",
+  "It's too early to quit — just one more paragraph.",
+  "Take a deep breath, drop your shoulders, and keep going.",
+  "Today's effort is tomorrow's ease.",
+  "You don't have to be fast — you just have to not stop.",
+];
+
+const BREAK_QUOTES = [
+  "Break time — rest your eyes and drink some water.",
+  "Take a breath. Stand up, stretch, and look into the distance.",
+  "You're doing great. You've earned this break.",
+];
+
+const studyQuoteBase = {
+  cycles: [
+    { focusStyle: 16, breakStyle: 17 },
+    { focusStyle: 16, breakStyle: 17 },
+    { focusStyle: 16, breakStyle: 17 },
+  ],
+  introMain: "STAY FOCUSED",
+  introSub: "3 × 50 / 10  ·  DEEP FOCUS SESSION",
+  outroMain: "WELL DONE",
+  outroSub: "GREAT WORK TODAY  ·  SEE YOU NEXT TIME",
+  countdownLabel: "GET READY",
+  focusLabel: "FOCUS",
+  breakLabel: "BREAK",
+  musicFocus: "bg2.mp3",
+  musicBreak: "calm.mp3",
+  musicVolume: 0.6,
+  keepAmbient: true,
+  videoSrc: "real8.mp4",
+  videoLoopFrames: 272,
+  videoScrim: 0.42,
+  ambientKey: "rain",
+  cornerTimer: true,
+  accentColor: "#e7c074",
+  quotes: FOCUS_QUOTES,
+  breakQuotes: BREAK_QUOTES,
+  quoteFirstSeconds: 90,
+  quoteEverySeconds: 600,
+  quoteHoldSeconds: 8,
+};
+
+const studyQuote: StudyProps = {
+  ...studyQuoteBase,
+  countdownSeconds: 10,
+  focusMinutes: 50,
+  breakMinutes: 10,
+  introSeconds: 4,
+  outroSeconds: 5,
+};
+
+const studyQuoteDemo: StudyProps = {
+  ...studyQuoteBase,
+  countdownSeconds: 5,
+  focusMinutes: 48 / 60, // 48 sn
+  breakMinutes: 16 / 60, // 16 sn
+  introSeconds: 4,
+  outroSeconds: 5,
+  quoteFirstSeconds: 8,
+  quoteEverySeconds: 14,
+  quoteHoldSeconds: 4,
+};
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
@@ -414,6 +488,26 @@ export const RemotionRoot: React.FC = () => {
         component={StudySession}
         schema={studySchema}
         defaultProps={studyClipDemo}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyQuote"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyQuote}
+        calculateMetadata={calcMetaStudy}
+        fps={FPS}
+        width={WIDTH}
+        height={HEIGHT}
+      />
+      <Composition
+        id="StudyQuoteDemo"
+        component={StudySession}
+        schema={studySchema}
+        defaultProps={studyQuoteDemo}
         calculateMetadata={calcMetaStudy}
         fps={FPS}
         width={WIDTH}
