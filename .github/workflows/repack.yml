@@ -13,7 +13,7 @@ on:
 jobs:
   repack:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
@@ -35,7 +35,7 @@ jobs:
           echo "toplam parça: $i"
           cat list.txt
           ffmpeg -y -f concat -safe 0 -i list.txt \
-            -c:v libx264 -preset medium -crf 25 -maxrate 1700k -bufsize 3400k \
+            -c:v libx264 -preset veryfast -crf 25 -maxrate 1800k -bufsize 3600k \
             -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart \
             "${{ inputs.name }}-small.mp4"
           ls -la "${{ inputs.name }}-small.mp4"
