@@ -1,0 +1,212 @@
+{
+  "updated_at": "2026-06-13T16:14:11Z",
+  "channel": {
+    "title": "Deep Focus",
+    "id": "UCHosLBzlw7T--iP7cUG8V8A",
+    "url": "https://youtube.com/channel/UCHosLBzlw7T--iP7cUG8V8A",
+    "subs": 5,
+    "channel_views": 34
+  },
+  "automation": {
+    "healthy": true,
+    "cron": "0 5 * * *",
+    "cron_label": "her gün 08:00 TSİ"
+  },
+  "stats": {
+    "queue": 9,
+    "published": 4,
+    "buffer_days": 9,
+    "total_views": 34
+  },
+  "next": {
+    "id": "UYWmwsNQjLo",
+    "title": "3-Hour Study With Me 🔥 Autumn Porch Fireplace · 3 × 50/10 Deep Focus Timer",
+    "thumb": "https://i9.ytimg.com/vi/UYWmwsNQjLo/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLDs5n6bi_LjTruhpPIt9zP5nSegDg",
+    "emoji": "🔥",
+    "format": "50/10",
+    "dur": "3-Hour",
+    "url": "https://youtu.be/UYWmwsNQjLo",
+    "publish_at": "2026-06-14T09:00:00Z"
+  },
+  "queue": [
+    {
+      "id": "UYWmwsNQjLo",
+      "title": "3-Hour Study With Me 🔥 Autumn Porch Fireplace · 3 × 50/10 Deep Focus Timer",
+      "thumb": "https://i9.ytimg.com/vi/UYWmwsNQjLo/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLDs5n6bi_LjTruhpPIt9zP5nSegDg",
+      "emoji": "🔥",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/UYWmwsNQjLo",
+      "publish_at": "2026-06-14T09:00:00Z"
+    },
+    {
+      "id": "VyWq26ESU1Q",
+      "title": "90-Min Study With Me 🌧️ Lofi Rain Pomodoro · 3 × 25/5 (Rain Sounds Only While Studying)",
+      "thumb": "https://i9.ytimg.com/vi/VyWq26ESU1Q/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLBlnZF2q56GV_WxckKqUJ572oQjYA",
+      "emoji": "🌧",
+      "format": "25/5",
+      "dur": "90-Min",
+      "url": "https://youtu.be/VyWq26ESU1Q",
+      "publish_at": "2026-06-15T09:00:00Z"
+    },
+    {
+      "id": "YkjDyKU04ko",
+      "title": "90-Min Study With Me ⛰️ Mountain Rain Pomodoro · 3 × 25/5 Deep Focus (Rain Ambience)",
+      "thumb": "https://i9.ytimg.com/vi/YkjDyKU04ko/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCT3BrM-ytv4g6Qh1xjPEnJdMY78g",
+      "emoji": "⛰",
+      "format": "25/5",
+      "dur": "90-Min",
+      "url": "https://youtu.be/YkjDyKU04ko",
+      "publish_at": "2026-06-16T09:00:00Z"
+    },
+    {
+      "id": "_m1u188lyXE",
+      "title": "90-Min Study With Me 🌙 Cozy Desk at Night · 3 × 25/5 Lofi Pomodoro (Rain Focus)",
+      "thumb": "https://i9.ytimg.com/vi/_m1u188lyXE/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCAI3hH3wwoYac0YZfYUZbtNex7TQ",
+      "emoji": "🌙",
+      "format": "25/5",
+      "dur": "90-Min",
+      "url": "https://youtu.be/_m1u188lyXE",
+      "publish_at": "2026-06-18T09:00:00Z"
+    },
+    {
+      "id": "dPeiNEuQL1k",
+      "title": "3-Hour Study With Me 🌧️ Rainy Night Desk · Pomodoro 3 × 50/10 with Motivation",
+      "thumb": "https://i9.ytimg.com/vi/dPeiNEuQL1k/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLBOQHANzRUW5eDu0txf-LZ2j5GplQ",
+      "emoji": "🌧",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/dPeiNEuQL1k",
+      "publish_at": "2026-06-19T09:00:00Z"
+    },
+    {
+      "id": "PyicRZ0iz2Q",
+      "title": "3-Hour Study With Me ☕ Cozy Forest Café · Pomodoro 3 × 50/10 with Motivation",
+      "thumb": "https://i9.ytimg.com/vi/PyicRZ0iz2Q/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCzXy0qYTGmRCg5VWPAOOfYfbedPg",
+      "emoji": "☕",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/PyicRZ0iz2Q",
+      "publish_at": "2026-06-20T09:00:00Z"
+    },
+    {
+      "id": "vSXat0ap-cQ",
+      "title": "3-Hour Study With Me 🌧️ Rainy Balcony · Pomodoro 3 × 50/10 with Motivation",
+      "thumb": "https://i9.ytimg.com/vi/vSXat0ap-cQ/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCiqS1SQwKb4I8aOuMnKWxTs0FbeQ",
+      "emoji": "🌧",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/vSXat0ap-cQ",
+      "publish_at": "2026-06-21T09:00:00Z"
+    },
+    {
+      "id": "lB-omAqO4uk",
+      "title": "90-Min Study With Me 🌧️ Rainy Window · Pomodoro 3 × 25/5 (No Music While Studying)",
+      "thumb": "https://i9.ytimg.com/vi/lB-omAqO4uk/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLDxsPNCPmLuri_GeQ9mx5dvGHi--g",
+      "emoji": "🌧",
+      "format": "25/5",
+      "dur": "90-Min",
+      "url": "https://youtu.be/lB-omAqO4uk",
+      "publish_at": "2026-06-22T09:00:00Z"
+    },
+    {
+      "id": "952GaRli8lQ",
+      "title": "90-Min Study With Me 🌲 Forest Rain · Pomodoro 3 × 25/5 (No Music While Studying)",
+      "thumb": "https://i9.ytimg.com/vi/952GaRli8lQ/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLD2vOISCf7AsD4y8lOPHKkuy8URBA",
+      "emoji": "🌲",
+      "format": "25/5",
+      "dur": "90-Min",
+      "url": "https://youtu.be/952GaRli8lQ",
+      "publish_at": "2026-06-23T09:00:00Z"
+    }
+  ],
+  "published": [
+    {
+      "id": "l3d95_ItwQE",
+      "title": "3-Hour Study With Me 🍂 Lakeside Firepit Pomodoro · 3 × 50/10 (Autumn Rain Mood)",
+      "thumb": "https://i.ytimg.com/vi/l3d95_ItwQE/mqdefault.jpg",
+      "emoji": "🍂",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/l3d95_ItwQE",
+      "views": 0,
+      "published_at": "2026-06-13T09:00:05Z"
+    },
+    {
+      "id": "kbYRHopNYjI",
+      "title": "3-Hour Study With Me 🔥 Cozy Fireplace Pomodoro · 3 × 50/10 (No Music While Studying)",
+      "thumb": "https://i.ytimg.com/vi/kbYRHopNYjI/mqdefault.jpg",
+      "emoji": "🔥",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/kbYRHopNYjI",
+      "views": 0,
+      "published_at": "2026-06-12T09:00:09Z"
+    },
+    {
+      "id": "clZ0dVZrDkk",
+      "title": "1-Hour Study With Me 🌲🌧️ Forest Rain Pomodoro 50/10 · Deep Focus Timer (Rain Sounds)",
+      "thumb": "https://i.ytimg.com/vi/clZ0dVZrDkk/mqdefault.jpg",
+      "emoji": "🌲",
+      "format": "50/10",
+      "dur": "1-Hour",
+      "url": "https://youtu.be/clZ0dVZrDkk",
+      "views": 1,
+      "published_at": "2026-06-11T09:00:19Z"
+    },
+    {
+      "id": "kutm1TXjneA",
+      "title": "3-Hour Study With Me 🌧️ Lofi Rain Pomodoro · 3 × 50/10 Cozy Deep Focus Timer",
+      "thumb": "https://i.ytimg.com/vi/kutm1TXjneA/mqdefault.jpg",
+      "emoji": "🌧",
+      "format": "50/10",
+      "dur": "3-Hour",
+      "url": "https://youtu.be/kutm1TXjneA",
+      "views": 33,
+      "published_at": "2026-06-10T09:00:26Z"
+    }
+  ],
+  "pipeline": [
+    {
+      "key": "prepare",
+      "label": "Klip + Plan",
+      "state": "done",
+      "detail": ""
+    },
+    {
+      "key": "render",
+      "label": "Render",
+      "state": "done",
+      "detail": "11/11"
+    },
+    {
+      "key": "merge",
+      "label": "Transcode",
+      "state": "done",
+      "detail": ""
+    },
+    {
+      "key": "publish",
+      "label": "YouTube",
+      "state": "done",
+      "detail": ""
+    }
+  ],
+  "latest_run": {
+    "id": 27465720704,
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-06-13T11:39:46Z",
+    "url": "https://github.com/admlyz5858/pomodoro-video/actions/runs/27465720704"
+  },
+  "runs": [
+    {
+      "id": 27465720704,
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-06-13T11:39:46Z",
+      "url": "https://github.com/admlyz5858/pomodoro-video/actions/runs/27465720704",
+      "title": "Daily Study Video"
+    }
+  ]
+}
