@@ -1,0 +1,88 @@
+name: Auto Clip (render + transcode)
+
+on:
+  workflow_dispatch:
+    inputs:
+      src:     { description: "public/ içindeki klip (örn real10.mp4)", type: string }
+      lf:      { description: "loopFrames", type: string }
+      scrim:   { description: "videoScrim (0-1)", type: string, default: "0.4" }
+      amb:     { description: "ambientKey (rain/fire/forest/night/storm)", type: string, default: "rain" }
+      accent:  { description: "accentColor (#rrggbb)", type: string, default: "#8fb8dc" }
+      fmin:    { description: "focusMinutes (25/50)", type: string, default: "25" }
+      bmin:    { description: "breakMinutes (5/10)", type: string, default: "5" }
+      name:    { description: "çıktı adı (örn auto-2026-06-22)", type: string }
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.mk.outputs.matrix }}
+      props: ${{ steps.mk.outputs.props }}
+      chunks: ${{ steps.mk.outputs.chunks }}
+    steps:
+      - id: mk
+        run: |
+          F=${{ inputs.fmin }}; B=${{ inputs.bmin }}
+          PROPS="{\"videoSrc\":\"${{ inputs.src }}\",\"videoLoopFrames\":${{ inputs.lf }},\"videoScrim\":${{ inputs.scrim }},\"ambientKey\":\"${{ inputs.amb }}\",\"accentColor\":\"${{ inputs.accent }}\",\"focusMinutes\":$F,\"breakMinutes\":$B}"
+          node -e "
+            const F=$F,B=$B,fps=30;
+            const total=(4+10+3*(F*60+B*60)+5)*fps, c=16200, a=[];
+            for (let i=0,s=0;s<total;i++,s+=c) a.push({idx:i,frames:s+'-'+Math.min(s+c-1,total-1)});
+            console.log('matrix='+JSON.stringify({include:a}));
+            console.log('chunks='+a.length);
+          " >> "$GITHUB_OUTPUT"
+          echo "props=$PROPS" >> "$GITHUB_OUTPUT"
+
+  render:
+    needs: plan
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - run: npx remotion browser ensure
+      - name: Render chunk ${{ matrix.idx }}
+        run: |
+          mkdir -p out
+          npx remotion render StudyQuote "out/chunk-${{ matrix.idx }}.mp4" \
+            --frames=${{ matrix.frames }} \
+            --props='${{ needs.plan.outputs.props }}' \
+            --concurrency=2 --log=verbose
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chunk-${{ matrix.idx }}
+          path: out/chunk-${{ matrix.idx }}.mp4
+          retention-days: 5
+          if-no-files-found: error
+
+  merge:
+    needs: [plan, render]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/download-artifact@v4
+        with: { path: chunks }
+      - name: Concat + transcode (küçük dosya)
+        run: |
+          N=${{ needs.plan.outputs.chunks }}
+          : > list.txt
+          i=0
+          while [ $i -lt $N ]; do echo "file 'chunks/chunk-$i/chunk-$i.mp4'" >> list.txt; i=$((i+1)); done
+          ffmpeg -y -f concat -safe 0 -i list.txt \
+            -c:v libx264 -preset veryfast -crf 25 -maxrate 1800k -bufsize 3600k \
+            -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart "${{ inputs.name }}.mp4"
+          ls -la "${{ inputs.name }}.mp4"
+          ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 "${{ inputs.name }}.mp4" || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.name }}
+          path: ${{ inputs.name }}.mp4
+          retention-days: 7
+          if-no-files-found: error
