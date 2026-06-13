@@ -572,15 +572,28 @@ $("f-go").onclick=()=>{
 };
 
 // ── öneriler ──
-const COMBOS=[
- {pos:"tr",style:"digital",accent:"#f0b15a",label:"Sağ üst · Dijital"},
- {pos:"tl",style:"minimal",accent:"#8fb8dc",label:"Sol üst · Minimal"},
- {pos:"br",style:"ring",accent:"#86b08a",label:"Sağ alt · Halka"},
- {pos:"center",style:"ring",accent:"#c7a3e6",label:"Merkez · Halka"},
- {pos:"bl",style:"digital",accent:"#84c5ec",label:"Sol alt · Dijital"},
- {pos:"tr",style:"minimal",accent:"#e89aa6",label:"Sağ üst · Minimal"},
+const POSES=["tr","tl","br","bl","center"];
+const STYLES=["digital","minimal","ring"];
+const ACCENTS=["#f0b15a","#8fb8dc","#86b08a","#c7a3e6","#84c5ec","#e89aa6","#7fc4c9","#e6b07a","#b9d36a","#d98fce","#f2e6c0","#9aa7ff"];
+const POSLBL={tr:"Sağ üst",tl:"Sol üst",br:"Sağ alt",bl:"Sol alt",center:"Merkez"};
+const STLBL={digital:"Dijital",minimal:"Minimal",ring:"Halka"};
+const SAMPLES=[
+ "The first ten minutes are behind you.","Small steps finish the biggest work.",
+ "Stay with this one thing.","One more paragraph.","Discipline over motivation.",
+ "Breathe. Drop your shoulders. Continue.","Today's effort, tomorrow's ease.",
+ "You just have to not stop.","Focus is a quiet superpower.","Progress, not perfection.",
 ];
-const SAMPLE="The first ten minutes are behind you.";
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function makeCombos(n){
+  const seen=new Set(),out=[]; let g=0;
+  while(out.length<n && g++<300){
+    const pos=pick(POSES),style=pick(STYLES);
+    const key=pos+style; if(seen.has(key))continue; seen.add(key);
+    out.push({pos,style,accent:pick(ACCENTS),label:`${POSLBL[pos]} · ${STLBL[style]}`});
+  }
+  return out;
+}
 let ideaCtx={};
 function miniClock(c){
   const dots=`<div class="md">${[0,1,2].map(i=>`<i style="background:${i===0?c.accent:'transparent'};border:1px solid ${c.accent}"></i>`).join("")}</div>`;
@@ -588,11 +601,11 @@ function miniClock(c){
   if(c.style==="ring") return `<div class="mclock ring ${c.pos}"><div class="rg" style="border-color:${c.accent}"><span class="mt">25:00</span></div>${dots}</div>`;
   return `<div class="mclock ${c.pos} ${c.style==='digital'?'pill':''}">${lab}<span class="mt">25:00</span>${dots}</div>`;
 }
-function pcard(clip,c,fmt){
+function pcard(clip,c,fmt,sample){
   const fl=fmt==="25"?"25/5":fmt==="50"?"50/10":"oto";
   return `<div class="pcard" data-clip="${clip.url}" data-pos="${c.pos}" data-style="${c.style}" data-accent="${c.accent}">
     <div class="pthumb" style="background-image:url('${clip.thumb}')"></div><div class="pscrim"></div>
-    ${miniClock(c)}<div class="pmsg">${SAMPLE}</div><div class="plabel">${c.label}</div>
+    ${miniClock(c)}<div class="pmsg">${sample}</div><div class="plabel">${c.label}</div>
     <div class="pfmt" style="color:${c.accent}">${fl}</div></div>`;
 }
 async function fetchIdeas(){
@@ -602,9 +615,10 @@ async function fetchIdeas(){
   $("i-grid").innerHTML=`<div class="iempty">öneriler getiriliyor…</div>`;
   try{
     const d=await api("/clips?q="+encodeURIComponent(q));
-    const clips=(d.clips||[]).filter(c=>c.thumb);
+    const clips=shuffle((d.clips||[]).filter(c=>c.thumb));
     if(!clips.length){$("i-grid").innerHTML=`<div class="iempty">Klip bulunamadı — tekrar dene.</div>`;return;}
-    $("i-grid").innerHTML=COMBOS.map((c,i)=>pcard(clips[i%clips.length],c,fmt)).join("");
+    const combos=makeCombos(8), samples=shuffle(SAMPLES);
+    $("i-grid").innerHTML=combos.map((c,i)=>pcard(clips[i%clips.length],c,fmt,samples[i%samples.length])).join("");
   }catch(e){$("i-grid").innerHTML=`<div class="iempty">Hata: ${e.message}</div>`;}
 }
 $("i-grid").addEventListener("click",e=>{
