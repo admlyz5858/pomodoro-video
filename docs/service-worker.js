@@ -1,5 +1,5 @@
 // Deep Focus dashboard — PWA service worker
-const CACHE = "df-dash-v1";
+const CACHE = "df-dash-v2";
 const SHELL = ["./", "./index.html", "./icon-192.png", "./icon-512.png", "./manifest.webmanifest"];
 
 self.addEventListener("install", (e) => {

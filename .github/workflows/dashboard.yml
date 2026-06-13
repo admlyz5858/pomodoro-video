@@ -2,10 +2,10 @@ name: Dashboard Status
 
 on:
   schedule:
-    - cron: "*/20 * * * *"   # ~20 dk'da bir taze durum
+    - cron: "*/10 * * * *"   # ~10 dk'da bir taze durum (render sırasında daha canlı)
   workflow_run:
     workflows: ["Daily Study Video"]
-    types: [completed]
+    types: [requested, completed]
   workflow_dispatch: {}
 
 permissions:

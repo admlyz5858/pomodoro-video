@@ -130,6 +130,29 @@ def github_data():
             {"key": "merge", "label": "Transcode", "state": ms, "detail": md},
             {"key": "publish", "label": "YouTube", "state": us, "detail": ud},
         ]
+        # ── canlı üretim durumu ──
+        run_status = r0["status"]  # queued | in_progress | completed
+        rj = [j for j in jobs if j["name"].startswith("render")]
+        rdone = sum(1 for j in rj if j["conclusion"] == "success")
+        rtot = len(rj)
+        order = [("prepare", ps, 0.05), ("render", rs, 0.70), ("merge", ms, 0.15), ("publish", us, 0.10)]
+        pct = 0.0
+        for key, stt, w in order:
+            if key == "render" and rtot:
+                pct += w * (rdone / rtot)
+            elif stt == "done":
+                pct += w
+        cur = next((k for k, stt, _ in order if stt != "done"), None)
+        labels = {"prepare": "Klip + Plan", "render": "Render", "merge": "Transcode", "publish": "YouTube"}
+        if run_status == "completed" and r0["conclusion"] == "success":
+            pct, cur = 1.0, None
+        runs_data["production"] = {
+            "active": run_status in ("queued", "in_progress"),
+            "status": run_status, "conclusion": r0["conclusion"],
+            "stage": labels.get(cur, "Tamamlandı"), "stage_key": cur,
+            "render_done": rdone, "render_total": rtot,
+            "percent": round(pct * 100), "started_at": r0["created_at"], "url": r0["html_url"],
+        }
     return runs_data
 
 def main():
@@ -150,6 +173,7 @@ def main():
         "queue": queue,
         "published": published[:10],
         "pipeline": gdata["pipeline"],
+        "production": gdata.get("production"),
         "latest_run": latest,
         "runs": gdata["runs"],
     }

@@ -1,18 +1,20 @@
 {
+  "id": "/pomodoro-video/",
   "name": "Deep Focus — Otomasyon",
   "short_name": "Deep Focus",
   "description": "YouTube study-with-me otomasyon paneli — canlı kuyruk, geri sayım ve üretim hattı.",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "/pomodoro-video/",
+  "scope": "/pomodoro-video/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "background_color": "#080b14",
   "theme_color": "#080b14",
   "lang": "tr",
+  "dir": "ltr",
   "categories": ["productivity", "utilities"],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/pomodoro-video/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/pomodoro-video/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/pomodoro-video/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }

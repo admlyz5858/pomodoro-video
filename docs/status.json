@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-06-13T16:14:11Z",
+  "updated_at": "2026-06-13T17:16:47Z",
   "channel": {
     "title": "Deep Focus",
     "id": "UCHosLBzlw7T--iP7cUG8V8A",
     "url": "https://youtube.com/channel/UCHosLBzlw7T--iP7cUG8V8A",
-    "subs": 5,
+    "subs": 6,
     "channel_views": 34
   },
   "automation": {
     "healthy": true,
     "cron": "0 5 * * *",
-    "cron_label": "her gün 08:00 TSİ"
+    "cron_label": "yayın · her gün 12:00 TSİ"
   },
   "stats": {
     "queue": 9,
@@ -21,7 +21,7 @@
   "next": {
     "id": "UYWmwsNQjLo",
     "title": "3-Hour Study With Me 🔥 Autumn Porch Fireplace · 3 × 50/10 Deep Focus Timer",
-    "thumb": "https://i9.ytimg.com/vi/UYWmwsNQjLo/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLDs5n6bi_LjTruhpPIt9zP5nSegDg",
+    "thumb": "https://i9.ytimg.com/vi/UYWmwsNQjLo/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLCTJ4TkWdY3ZxclpEquhFNx9urQYA",
     "emoji": "🔥",
     "format": "50/10",
     "dur": "3-Hour",
@@ -32,7 +32,7 @@
     {
       "id": "UYWmwsNQjLo",
       "title": "3-Hour Study With Me 🔥 Autumn Porch Fireplace · 3 × 50/10 Deep Focus Timer",
-      "thumb": "https://i9.ytimg.com/vi/UYWmwsNQjLo/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLDs5n6bi_LjTruhpPIt9zP5nSegDg",
+      "thumb": "https://i9.ytimg.com/vi/UYWmwsNQjLo/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLCTJ4TkWdY3ZxclpEquhFNx9urQYA",
       "emoji": "🔥",
       "format": "50/10",
       "dur": "3-Hour",
@@ -42,7 +42,7 @@
     {
       "id": "VyWq26ESU1Q",
       "title": "90-Min Study With Me 🌧️ Lofi Rain Pomodoro · 3 × 25/5 (Rain Sounds Only While Studying)",
-      "thumb": "https://i9.ytimg.com/vi/VyWq26ESU1Q/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLBlnZF2q56GV_WxckKqUJ572oQjYA",
+      "thumb": "https://i9.ytimg.com/vi/VyWq26ESU1Q/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLDcvz6NtfbXB6GB1lVp8EUYpXRc1A",
       "emoji": "🌧",
       "format": "25/5",
       "dur": "90-Min",
@@ -52,7 +52,7 @@
     {
       "id": "YkjDyKU04ko",
       "title": "90-Min Study With Me ⛰️ Mountain Rain Pomodoro · 3 × 25/5 Deep Focus (Rain Ambience)",
-      "thumb": "https://i9.ytimg.com/vi/YkjDyKU04ko/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCT3BrM-ytv4g6Qh1xjPEnJdMY78g",
+      "thumb": "https://i9.ytimg.com/vi/YkjDyKU04ko/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLBVG4wVKPwtjTawyNIhAruP0CfLeg",
       "emoji": "⛰",
       "format": "25/5",
       "dur": "90-Min",
@@ -62,7 +62,7 @@
     {
       "id": "_m1u188lyXE",
       "title": "90-Min Study With Me 🌙 Cozy Desk at Night · 3 × 25/5 Lofi Pomodoro (Rain Focus)",
-      "thumb": "https://i9.ytimg.com/vi/_m1u188lyXE/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCAI3hH3wwoYac0YZfYUZbtNex7TQ",
+      "thumb": "https://i9.ytimg.com/vi/_m1u188lyXE/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLCUvFieZuQHc8sxKPPeciu9lRuNqg",
       "emoji": "🌙",
       "format": "25/5",
       "dur": "90-Min",
@@ -72,7 +72,7 @@
     {
       "id": "dPeiNEuQL1k",
       "title": "3-Hour Study With Me 🌧️ Rainy Night Desk · Pomodoro 3 × 50/10 with Motivation",
-      "thumb": "https://i9.ytimg.com/vi/dPeiNEuQL1k/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLBOQHANzRUW5eDu0txf-LZ2j5GplQ",
+      "thumb": "https://i9.ytimg.com/vi/dPeiNEuQL1k/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLCw-xuTe11nURIDbilWdQXk0PBkig",
       "emoji": "🌧",
       "format": "50/10",
       "dur": "3-Hour",
@@ -82,7 +82,7 @@
     {
       "id": "PyicRZ0iz2Q",
       "title": "3-Hour Study With Me ☕ Cozy Forest Café · Pomodoro 3 × 50/10 with Motivation",
-      "thumb": "https://i9.ytimg.com/vi/PyicRZ0iz2Q/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCzXy0qYTGmRCg5VWPAOOfYfbedPg",
+      "thumb": "https://i9.ytimg.com/vi/PyicRZ0iz2Q/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLCSMDUR0zYKF-SimrNiF64X3CcplQ",
       "emoji": "☕",
       "format": "50/10",
       "dur": "3-Hour",
@@ -92,7 +92,7 @@
     {
       "id": "vSXat0ap-cQ",
       "title": "3-Hour Study With Me 🌧️ Rainy Balcony · Pomodoro 3 × 50/10 with Motivation",
-      "thumb": "https://i9.ytimg.com/vi/vSXat0ap-cQ/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLCiqS1SQwKb4I8aOuMnKWxTs0FbeQ",
+      "thumb": "https://i9.ytimg.com/vi/vSXat0ap-cQ/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLDpZZ1CXCJYbzCFO44uibGlCzgjMA",
       "emoji": "🌧",
       "format": "50/10",
       "dur": "3-Hour",
@@ -102,7 +102,7 @@
     {
       "id": "lB-omAqO4uk",
       "title": "90-Min Study With Me 🌧️ Rainy Window · Pomodoro 3 × 25/5 (No Music While Studying)",
-      "thumb": "https://i9.ytimg.com/vi/lB-omAqO4uk/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLDxsPNCPmLuri_GeQ9mx5dvGHi--g",
+      "thumb": "https://i9.ytimg.com/vi/lB-omAqO4uk/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLBnOi-U3udfpdPBlPQl-PYC5TR1gw",
       "emoji": "🌧",
       "format": "25/5",
       "dur": "90-Min",
@@ -112,7 +112,7 @@
     {
       "id": "952GaRli8lQ",
       "title": "90-Min Study With Me 🌲 Forest Rain · Pomodoro 3 × 25/5 (No Music While Studying)",
-      "thumb": "https://i9.ytimg.com/vi/952GaRli8lQ/mqdefault.jpg?sqp=CNiBttEG&rs=AOn4CLD2vOISCf7AsD4y8lOPHKkuy8URBA",
+      "thumb": "https://i9.ytimg.com/vi/952GaRli8lQ/mqdefault.jpg?sqp=CJSgttEG&rs=AOn4CLDQmokbqRaqIMDNoi-qiSnbcb9RLg",
       "emoji": "🌲",
       "format": "25/5",
       "dur": "90-Min",
@@ -192,6 +192,18 @@
       "detail": ""
     }
   ],
+  "production": {
+    "active": false,
+    "status": "completed",
+    "conclusion": "success",
+    "stage": "Tamamlandı",
+    "stage_key": null,
+    "render_done": 11,
+    "render_total": 11,
+    "percent": 100,
+    "started_at": "2026-06-13T11:39:46Z",
+    "url": "https://github.com/admlyz5858/pomodoro-video/actions/runs/27465720704"
+  },
   "latest_run": {
     "id": 27465720704,
     "status": "completed",
