@@ -105,10 +105,18 @@ def main():
     props = {"focusMinutes": fmin, "breakMinutes": bmin, "videoScrim": p["scrim"],
              "ambientKey": p["ambient"], "accentColor": p["accent"]}
 
+    # render matrix (16200'lük parçalar)
+    chunk = 16200
+    include, s, i = [], 0, 0
+    while s < total_frames:
+        include.append({"idx": i, "frames": f"{s}-{min(s+chunk-1, total_frames-1)}"})
+        s += chunk; i += 1
+
     plan = {"focus": fmin, "break": bmin, "ambient": p["ambient"], "accent": p["accent"],
             "scrim": p["scrim"], "kind": p["kind"], "clip_url": clip_url, "clip_src": clip_src,
             "clip_id": clip_id, "total_frames": total_frames, "duration_s": total_s,
-            "title": title, "description": description, "tags": tags, "props": props}
+            "title": title, "description": description, "tags": tags, "props": props,
+            "matrix": {"include": include}, "chunks": len(include)}
     print(json.dumps(plan))
 
 if __name__ == "__main__":

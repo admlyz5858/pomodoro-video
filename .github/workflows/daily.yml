@@ -1,0 +1,158 @@
+name: Daily Study Video
+
+on:
+  schedule:
+    - cron: "0 5 * * *"   # her gün 05:00 UTC (yayın slotu sonraki boş güne 12:00 TSİ)
+  workflow_dispatch:
+    inputs:
+      force_url: { description: "klip URL (boşsa otomatik bulunur)", type: string, default: "" }
+      focus:     { description: "focusMinutes (boşsa gün rotasyonu)", type: string, default: "" }
+      brk:       { description: "breakMinutes", type: string, default: "" }
+      kind:      { description: "sahne adı override", type: string, default: "" }
+      emoji:     { description: "emoji override", type: string, default: "" }
+      query:     { description: "stock arama override", type: string, default: "" }
+      ambient:   { description: "ambient override", type: string, default: "" }
+      accent:    { description: "accent #hex override", type: string, default: "" }
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      chunks: ${{ steps.plan.outputs.chunks }}
+      title: ${{ steps.plan.outputs.title }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Plan (format + sahne + klip seçimi)
+        id: plan
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
+          IN_FORCE_URL: ${{ inputs.force_url }}
+          IN_FOCUS: ${{ inputs.focus }}
+          IN_BREAK: ${{ inputs.brk }}
+          IN_KIND: ${{ inputs.kind }}
+          IN_EMOJI: ${{ inputs.emoji }}
+          IN_QUERY: ${{ inputs.query }}
+          IN_AMBIENT: ${{ inputs.ambient }}
+          IN_ACCENT: ${{ inputs.accent }}
+        run: |
+          export DAY_INDEX=$(date -u +%j)
+          python3 tools/plan_daily.py > plan.json
+          echo "--- plan ---"; jq '{kind,focus,break,ambient,accent,clip_src,clip_id,total_frames,title}' plan.json
+          echo "matrix=$(jq -c .matrix plan.json)" >> "$GITHUB_OUTPUT"
+          echo "chunks=$(jq .chunks plan.json)" >> "$GITHUB_OUTPUT"
+          echo "title=$(jq -r .title plan.json)" >> "$GITHUB_OUTPUT"
+      - name: Klip indir + kusursuz loop
+        run: |
+          URL=$(jq -r .clip_url plan.json)
+          python3 tools/stock.py download "$URL" raw.mp4
+          D=$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 raw.mp4)
+          X=1.2
+          L=$(python3 -c "print(round($D-$X,3))")
+          LF=$(python3 -c "print(round($L*30))")
+          ffmpeg -y -i raw.mp4 -filter_complex \
+          "[0:v]scale=1920:1080,fps=30,setsar=1,split[v1][v2];\
+          [v1]trim=0:${L},setpts=PTS-STARTPTS[head];\
+          [v2]trim=${L}:${D},setpts=PTS-STARTPTS,format=yuva420p,fade=t=out:st=0:d=${X}:alpha=1[tail];\
+          [head][tail]overlay=eof_action=pass,format=yuv420p[outv]" \
+          -map "[outv]" -an -c:v libx264 -preset veryfast -crf 20 -pix_fmt yuv420p -movflags +faststart loop.mp4
+          echo "loopFrames=$LF"
+          # props.json = plan.props + videoSrc/videoLoopFrames
+          jq --argjson lf "$LF" '.props + {videoSrc:"loop.mp4", videoLoopFrames:$lf}' plan.json > props.json
+          cat props.json
+          # meta.json (publishAt yok -> publish job otomatik bulur)
+          jq '{title,description,tags,categoryId:"27"}' plan.json > meta.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prep
+          path: |
+            loop.mp4
+            props.json
+            meta.json
+          retention-days: 3
+          if-no-files-found: error
+
+  render:
+    needs: prepare
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - run: npx remotion browser ensure
+      - uses: actions/download-artifact@v4
+        with: { name: prep, path: prep }
+      - name: Klibi public'e koy
+        run: cp prep/loop.mp4 public/loop.mp4
+      - name: Render chunk ${{ matrix.idx }}
+        run: |
+          mkdir -p out
+          npx remotion render StudyQuote "out/chunk-${{ matrix.idx }}.mp4" \
+            --frames=${{ matrix.frames }} \
+            --props="$(cat prep/props.json)" \
+            --concurrency=2 --log=verbose
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chunk-${{ matrix.idx }}
+          path: out/chunk-${{ matrix.idx }}.mp4
+          retention-days: 3
+          if-no-files-found: error
+
+  merge:
+    needs: [prepare, render]
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/download-artifact@v4
+        with: { path: chunks }
+      - name: Concat + transcode
+        run: |
+          N=${{ needs.prepare.outputs.chunks }}
+          : > list.txt
+          i=0
+          while [ $i -lt $N ]; do echo "file 'chunks/chunk-$i/chunk-$i.mp4'" >> list.txt; i=$((i+1)); done
+          ffmpeg -y -f concat -safe 0 -i list.txt \
+            -c:v libx264 -preset veryfast -crf 25 -maxrate 1800k -bufsize 3600k \
+            -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart final.mp4
+          ls -la final.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: final
+          path: final.mp4
+          retention-days: 5
+          if-no-files-found: error
+
+  publish:
+    needs: [prepare, merge]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install google-auth google-api-python-client
+      - uses: actions/download-artifact@v4
+        with: { name: prep, path: prep }
+      - uses: actions/download-artifact@v4
+        with: { name: final, path: . }
+      - name: Thumbnail (motivasyon mesajı görünen kare)
+        run: ffmpeg -y -ss 108 -i final.mp4 -frames:v 1 -vf scale=1280:720 -q:v 2 thumb.jpg
+      - name: Upload to YouTube (private + zamanlı)
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python3 tools/yt_upload_ci.py final.mp4 prep/meta.json thumb.jpg
