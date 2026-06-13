@@ -300,13 +300,16 @@ a.reset{color:inherit;text-decoration:none}
       <label>Sahne</label>
       <div class="seg" id="f-scene">
         <div class="opt on" data-scene="auto">Otomatik</div>
+        <div class="opt" data-scene="anime">🎴 Anime</div>
+        <div class="opt" data-scene="lofi">🎧 Lofi</div>
         <div class="opt" data-scene="fire">🔥 Şömine</div>
         <div class="opt" data-scene="rain">🌧️ Yağmur</div>
         <div class="opt" data-scene="desk">📚 Lofi masa</div>
         <div class="opt" data-scene="snow">❄️ Kar</div>
         <div class="opt" data-scene="forest">🌲 Orman</div>
         <div class="opt" data-scene="cafe">☕ Kafe</div>
-        <div class="opt" data-scene="ocean">🌊 Okyanus</div>
+        <div class="opt" data-scene="night">🌙 Gece</div>
+        <div class="opt" data-scene="candle">🕯️ Mum</div>
       </div>
     </div>
 
@@ -368,13 +371,16 @@ a.reset{color:inherit;text-decoration:none}
       <label>Sahne</label>
       <div class="seg" id="i-scene">
         <div class="opt on" data-scene="auto">🎲 Sürpriz</div>
+        <div class="opt" data-scene="anime">🎴 Anime</div>
+        <div class="opt" data-scene="lofi">🎧 Lofi</div>
         <div class="opt" data-scene="fire">🔥 Şömine</div>
         <div class="opt" data-scene="rain">🌧️ Yağmur</div>
         <div class="opt" data-scene="desk">📚 Lofi masa</div>
         <div class="opt" data-scene="snow">❄️ Kar</div>
         <div class="opt" data-scene="forest">🌲 Orman</div>
         <div class="opt" data-scene="cafe">☕ Kafe</div>
-        <div class="opt" data-scene="ocean">🌊 Okyanus</div>
+        <div class="opt" data-scene="night">🌙 Gece</div>
+        <div class="opt" data-scene="candle">🕯️ Mum</div>
       </div>
     </div>
     <div class="field">
@@ -502,14 +508,18 @@ async function load(){
 // ── üret paneli ──
 const LS={get:k=>{try{return localStorage.getItem(k)||""}catch{return""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}}};
 let cfg={url:LS.get("df_relay"),pin:LS.get("df_pin")};
+// Döngüye uygun (yön hareketi az, başa sarması belli olmayan) sorgular
 const SCENE={
-  fire:{q:"fireplace cozy fire flames",amb:"fire",kind:"Cozy Fireplace",em:"🔥"},
-  rain:{q:"rain window glass cozy",amb:"rain",kind:"Rainy Window",em:"🌧️"},
-  desk:{q:"study desk lamp night cozy",amb:"rain",kind:"Lofi Study Desk",em:"📚"},
-  snow:{q:"snow falling window night",amb:"night",kind:"Snowy Night",em:"❄️"},
-  forest:{q:"rain forest green leaves",amb:"forest",kind:"Forest Rain",em:"🌲"},
-  cafe:{q:"coffee book cozy warm light",amb:"rain",kind:"Coffee & Books",em:"☕"},
-  ocean:{q:"ocean waves aerial calm",amb:"night",kind:"Calm Ocean",em:"🌊"},
+  fire:{q:"fireplace fire flames loop seamless",amb:"fire",kind:"Cozy Fireplace",em:"🔥"},
+  rain:{q:"rain window glass loop seamless",amb:"rain",kind:"Rainy Window",em:"🌧️"},
+  desk:{q:"lofi study room loop animated",amb:"rain",kind:"Lofi Study Desk",em:"📚"},
+  snow:{q:"snow falling loop seamless",amb:"night",kind:"Snowy Night",em:"❄️"},
+  forest:{q:"rain forest leaves ambient loop",amb:"forest",kind:"Forest Rain",em:"🌲"},
+  cafe:{q:"coffee shop ambient loop",amb:"rain",kind:"Coffee & Books",em:"☕"},
+  anime:{q:"anime lofi loop animation",amb:"rain",kind:"Anime Lofi",em:"🎴"},
+  lofi:{q:"lofi animation loop background",amb:"night",kind:"Lofi Night",em:"🎧"},
+  night:{q:"night sky stars loop seamless",amb:"night",kind:"Starry Night",em:"🌙"},
+  candle:{q:"candle flame loop seamless dark",amb:"fire",kind:"Candle Glow",em:"🕯️"},
 };
 function toast(m,k){const t=$("toast");t.textContent=m;t.className="toast show "+(k||"");setTimeout(()=>t.className="toast",3600);}
 function closeM(){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));}
@@ -611,13 +621,14 @@ function pcard(clip,c,fmt,sample){
 async function fetchIdeas(){
   const scene=sel("i-scene","data-scene"),fmt=sel("i-fmt","data-fmt");
   ideaCtx={scene,fmt};
-  const q=(scene==="auto"||!SCENE[scene])?["rain window cozy","fireplace cozy fire","lofi study desk","snow falling window night","rain forest","coffee book cozy"][Math.floor(Math.random()*6)]:SCENE[scene].q;
+  const AUTOQ=["anime lofi loop animation","lofi animation loop background","fireplace fire loop seamless","rain window glass loop seamless","snow falling loop seamless","night sky stars loop","candle flame loop seamless","forest rain ambient loop","cozy room lofi loop"];
+  const q=(scene==="auto"||!SCENE[scene])?pick(AUTOQ):SCENE[scene].q;
   $("i-grid").innerHTML=`<div class="iempty">öneriler getiriliyor…</div>`;
   try{
     const d=await api("/clips?q="+encodeURIComponent(q));
     const clips=shuffle((d.clips||[]).filter(c=>c.thumb));
     if(!clips.length){$("i-grid").innerHTML=`<div class="iempty">Klip bulunamadı — tekrar dene.</div>`;return;}
-    const combos=makeCombos(8), samples=shuffle(SAMPLES);
+    const combos=makeCombos(12), samples=shuffle(SAMPLES);
     $("i-grid").innerHTML=combos.map((c,i)=>pcard(clips[i%clips.length],c,fmt,samples[i%samples.length])).join("");
   }catch(e){$("i-grid").innerHTML=`<div class="iempty">Hata: ${e.message}</div>`;}
 }

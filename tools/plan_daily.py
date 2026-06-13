@@ -11,15 +11,16 @@ import json, os, sys, subprocess
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# query'ler döngüye uygun (yön hareketi az, başa sarması belli olmayan) klipler için "loop/seamless/ambient" odaklı.
 PRESETS = [
-    {"kind": "Cozy Fireplace",   "emoji": "🔥", "query": "fireplace cozy fire flames", "ambient": "fire",   "accent": "#efb56a", "scrim": 0.42},
-    {"kind": "Rainy Window",     "emoji": "🌧️", "query": "rain window glass cozy",      "ambient": "rain",   "accent": "#8fb8dc", "scrim": 0.40},
-    {"kind": "Lofi Study Desk",  "emoji": "📚", "query": "study desk lamp night cozy",  "ambient": "rain",   "accent": "#c7a3e6", "scrim": 0.40},
-    {"kind": "Snowy Night",      "emoji": "❄️", "query": "snow falling window night",   "ambient": "night",  "accent": "#9ecbe0", "scrim": 0.42},
-    {"kind": "Forest Rain",      "emoji": "🌲", "query": "rain forest green leaves",     "ambient": "forest", "accent": "#86b08a", "scrim": 0.40},
-    {"kind": "Coffee & Books",   "emoji": "☕", "query": "coffee book cozy warm light",  "ambient": "rain",   "accent": "#86b08a", "scrim": 0.36},
-    {"kind": "Calm Ocean",       "emoji": "🌊", "query": "ocean waves aerial calm",      "ambient": "night",  "accent": "#7fc4c9", "scrim": 0.40},
-    {"kind": "Mountain Sunrise", "emoji": "⛰️", "query": "snow mountain sunrise clouds", "ambient": "night",  "accent": "#e6b07a", "scrim": 0.40},
+    {"kind": "Cozy Fireplace",   "emoji": "🔥", "query": "fireplace fire flames loop seamless", "ambient": "fire",   "accent": "#efb56a", "scrim": 0.42},
+    {"kind": "Rainy Window",     "emoji": "🌧️", "query": "rain window glass loop seamless",     "ambient": "rain",   "accent": "#8fb8dc", "scrim": 0.40},
+    {"kind": "Anime Lofi",       "emoji": "🎴", "query": "anime lofi loop animation",            "ambient": "rain",   "accent": "#c7a3e6", "scrim": 0.40},
+    {"kind": "Snowy Night",      "emoji": "❄️", "query": "snow falling loop seamless",           "ambient": "night",  "accent": "#9ecbe0", "scrim": 0.42},
+    {"kind": "Forest Rain",      "emoji": "🌲", "query": "rain forest leaves ambient loop",      "ambient": "forest", "accent": "#86b08a", "scrim": 0.40},
+    {"kind": "Lofi Night",       "emoji": "🎧", "query": "lofi animation loop background",       "ambient": "night",  "accent": "#84c5ec", "scrim": 0.40},
+    {"kind": "Starry Night",     "emoji": "🌙", "query": "night sky stars loop seamless",        "ambient": "night",  "accent": "#9aa7ff", "scrim": 0.40},
+    {"kind": "Candle Glow",      "emoji": "🕯️", "query": "candle flame loop seamless dark",      "ambient": "fire",   "accent": "#e6b07a", "scrim": 0.42},
 ]
 
 FPS = 30

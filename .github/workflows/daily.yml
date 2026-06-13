@@ -56,7 +56,7 @@ jobs:
           URL=$(jq -r .clip_url plan.json)
           python3 tools/stock.py download "$URL" raw.mp4
           D=$(ffprobe -v error -show_entries format=duration -of default=nk=1:nw=1 raw.mp4)
-          X=1.2
+          X=1.8
           L=$(python3 -c "print(round($D-$X,3))")
           LF=$(python3 -c "print(round($L*30))")
           ffmpeg -y -i raw.mp4 -filter_complex \

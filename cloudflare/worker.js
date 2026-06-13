@@ -50,7 +50,7 @@ export default {
       const out = [];
       try {
         const pr = await fetch("https://api.pexels.com/videos/search?" +
-          new URLSearchParams({ query: q, per_page: "12", orientation: "landscape", size: "large" }),
+          new URLSearchParams({ query: q, per_page: "24", orientation: "landscape", size: "large" }),
           { headers: { Authorization: env.PEXELS_API_KEY || "" } });
         if (pr.ok) { const pd = await pr.json();
           for (const v of pd.videos || []) {
@@ -61,7 +61,7 @@ export default {
       } catch (e) {}
       try {
         const xr = await fetch("https://pixabay.com/api/videos/?" +
-          new URLSearchParams({ key: env.PIXABAY_API_KEY || "", q, per_page: "20", video_type: "film" }));
+          new URLSearchParams({ key: env.PIXABAY_API_KEY || "", q, per_page: "30", video_type: "film" }));
         if (xr.ok) { const xd = await xr.json();
           for (const v of xd.hits || []) {
             const pk = v.videos && (v.videos.large || v.videos.medium);
@@ -70,7 +70,7 @@ export default {
       } catch (e) {}
       const f = out.filter(c => (c.w || 0) >= 1280 && (c.w || 0) >= (c.h || 0) && c.dur >= 8 && c.dur <= 60);
       f.sort((a, b) => (Math.abs((a.w || 0) - 1920) / 200 + Math.abs((a.dur || 0) - 22) / 6) - (Math.abs((b.w || 0) - 1920) / 200 + Math.abs((b.dur || 0) - 22) / 6));
-      return json({ clips: f.slice(0, 12) }, 200, o);
+      return json({ clips: f.slice(0, 28) }, 200, o);
     }
 
     // Referans klip yükle → R2 → URL
