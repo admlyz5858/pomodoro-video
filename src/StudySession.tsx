@@ -12,7 +12,7 @@ import { z } from "zod";
 import { SceneFor } from "./scene/SceneFor";
 import { RealScene } from "./scene/RealScene";
 import { DigitalClock } from "./components/DigitalClock";
-import { CornerTimer } from "./components/CornerTimer";
+import { CornerTimer, TimerPos, TimerVariant } from "./components/CornerTimer";
 import { QuoteOverlay } from "./components/QuoteOverlay";
 import { ThemedCountdown } from "./components/ThemedCountdown";
 import { TitleCard } from "./components/TitleCard";
@@ -52,6 +52,8 @@ export const studySchema = z.object({
   quoteFirstSeconds: z.number().optional(), // odakta ilk mesaj zamanı
   quoteEverySeconds: z.number().optional(), // sonraki mesaj aralığı
   quoteHoldSeconds: z.number().optional(), // mesaj ekranda kalma süresi
+  timerPosition: z.string().optional(), // tr|tl|br|bl|center
+  timerStyle: z.string().optional(), // digital|minimal|ring
 });
 export type StudyProps = z.infer<typeof studySchema>;
 
@@ -171,7 +173,9 @@ const TimerBlock: React.FC<{
   quoteTimes?: number[];
   quoteOffset?: number;
   quoteHoldSeconds?: number;
-}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride, ambientGain, cornerTimer, accentColor, quotes, quoteTimes, quoteOffset, quoteHoldSeconds }) => {
+  timerPosition?: string;
+  timerStyle?: string;
+}> = ({ style, totalSeconds, phaseFrames, label, accent, session, sessionTotal, music, musicVolume, keepAmbient, video, ambientOverride, ambientGain, cornerTimer, accentColor, quotes, quoteTimes, quoteOffset, quoteHoldSeconds, timerPosition, timerStyle }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = THEMES[style] ?? THEMES[0];
@@ -198,13 +202,35 @@ const TimerBlock: React.FC<{
 
       {cornerTimer ? (
         <>
-          <CornerTimer
-            seconds={seconds}
-            label={label}
-            accent={clockAccent}
-            sessionTotal={sessionTotal}
-            sessionCurrent={session}
-          />
+          {(timerPosition ?? "tr") === "center" ? (
+            <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+              <DigitalClock
+                seconds={seconds}
+                progress={progress}
+                label={label}
+                accent={clockAccent}
+                sessionTotal={sessionTotal}
+                sessionCurrent={session}
+                timeFont={fontByKey[theme.font]}
+                ringMode={timerStyle === "ring" ? "around" : theme.ring}
+                showDots
+                textColor="#f6f0e4"
+                scale={theme.clockScale ?? 1}
+                pulseLow
+              />
+            </AbsoluteFill>
+          ) : (
+            <CornerTimer
+              seconds={seconds}
+              label={label}
+              accent={clockAccent}
+              sessionTotal={sessionTotal}
+              sessionCurrent={session}
+              progress={progress}
+              position={(timerPosition ?? "tr") as TimerPos}
+              variant={(timerStyle ?? "digital") as TimerVariant}
+            />
+          )}
           {quotes && quotes.length && quoteTimes && quoteTimes.length ? (
             <QuoteOverlay
               quotes={quotes}
@@ -362,6 +388,8 @@ export const StudySession: React.FC<StudyProps> = (p) => {
                 quoteTimes={isFocus ? focusTimes : breakTimes}
                 quoteOffset={isFocus ? cycleIdx * focusTimes.length : cycleIdx}
                 quoteHoldSeconds={p.quoteHoldSeconds}
+                timerPosition={p.timerPosition}
+                timerStyle={p.timerStyle}
               />
             </Sequence>
           );

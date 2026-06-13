@@ -126,6 +126,50 @@ a.reset{color:inherit;text-decoration:none}
 .prod .ppct{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--amber);flex:none}
 .pbar{height:7px;border-radius:4px;background:var(--bg2);overflow:hidden;margin-top:11px;display:none}
 .pbar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--amber-soft));transition:width .7s ease;border-radius:4px}
+/* üret paneli */
+.cbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.cbtn{flex:1;min-width:150px;display:flex;align-items:center;justify-content:center;gap:8px;padding:15px 16px;border-radius:16px;font-family:var(--ui);font-weight:600;font-size:15px;cursor:pointer;border:1px solid var(--panel-line);transition:.18s;color:var(--cream)}
+.cbtn.primary{background:linear-gradient(120deg,var(--amber),#e09a44);color:#1a1206;border-color:transparent;box-shadow:0 10px 30px -12px var(--amber)}
+.cbtn.ghost{background:var(--panel)}
+.cbtn:active{transform:scale(.97)}
+.cbtn.gear{flex:none;min-width:0;width:52px;background:var(--panel);font-size:19px}
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:rgba(4,6,12,.66);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.modal.open{display:flex;animation:fade .2s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{width:100%;max-width:560px;max-height:90vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--panel-line);border-radius:22px 22px 0 0;padding:22px 20px calc(26px + env(safe-area-inset-bottom));animation:slideup .28s cubic-bezier(.2,.7,.3,1)}
+@media(min-width:560px){.modal{align-items:center}.sheet{border-radius:22px}}
+@keyframes slideup{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.sheet h3{font-family:var(--disp);font-weight:600;font-size:21px;color:var(--cream);margin-bottom:4px}
+.sheet .sub{font-size:12px;color:var(--mut);margin-bottom:18px}
+.field{margin-bottom:17px}
+.field>label{display:block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:9px}
+.seg{display:flex;gap:7px;flex-wrap:wrap}
+.opt{padding:9px 13px;border-radius:11px;border:1px solid var(--panel-line);background:var(--panel);color:var(--ink);font-size:13px;cursor:pointer;transition:.15s;user-select:none}
+.opt.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--cream)}
+.posgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.pos{aspect-ratio:1;border-radius:11px;border:1px solid var(--panel-line);background:var(--panel);position:relative;cursor:pointer;transition:.15s}
+.pos.on{border-color:var(--amber);background:color-mix(in srgb,var(--amber) 14%,transparent)}
+.pos i{position:absolute;width:10px;height:7px;border-radius:2px;background:var(--mut)}
+.pos.on i{background:var(--amber)}
+.pos[data-p=tr] i{top:6px;right:6px}.pos[data-p=tl] i{top:6px;left:6px}
+.pos[data-p=br] i{bottom:6px;right:6px}.pos[data-p=bl] i{bottom:6px;left:6px}
+.pos[data-p=center] i{top:50%;left:50%;transform:translate(-50%,-50%);width:13px;height:9px}
+.swrow{display:flex;gap:9px;flex-wrap:wrap}
+.sw{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.15s}
+.sw.on{border-color:var(--cream);transform:scale(1.12)}
+.inp{width:100%;padding:11px 13px;border-radius:11px;border:1px solid var(--panel-line);background:var(--bg);color:var(--ink);font-size:14px;font-family:var(--ui)}
+.inp::placeholder{color:var(--faint)}
+.hide{display:none!important}
+.go{width:100%;margin-top:6px;padding:15px;border-radius:14px;border:none;background:linear-gradient(120deg,var(--amber),#e09a44);color:#1a1206;font-weight:700;font-size:15px;font-family:var(--ui);cursor:pointer}
+.go:disabled{opacity:.5}
+.xrow{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.xbtn{background:none;border:none;color:var(--mut);font-size:26px;cursor:pointer;line-height:1}
+.note{font-size:11px;color:var(--faint);margin-top:6px}
+.toast{position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);z-index:60;background:var(--bg2);border:1px solid var(--panel-line);color:var(--cream);padding:13px 20px;border-radius:13px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 14px 40px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:color-mix(in srgb,var(--green) 40%,transparent)}
+.toast.err{border-color:color-mix(in srgb,var(--red) 40%,transparent)}
 .anim{opacity:0;transform:translateY(10px);animation:up .6s cubic-bezier(.2,.7,.3,1) forwards}
 .anim.d1{animation-delay:.06s}.anim.d2{animation-delay:.12s}.anim.d3{animation-delay:.18s}.anim.d4{animation-delay:.24s}
 @keyframes up{to{opacity:1;transform:none}}
@@ -144,6 +188,12 @@ a.reset{color:inherit;text-decoration:none}
       <span class="upd" id="upd">—</span>
     </div>
   </header>
+
+  <div class="cbar anim">
+    <button class="cbtn primary" id="btn-auto">✨ Sen karar ver</button>
+    <button class="cbtn ghost" id="btn-custom">🎛 Özelleştir</button>
+    <button class="cbtn gear" id="btn-gear" title="Relay ayarları">⚙</button>
+  </div>
 
   <div class="err" id="err">Durum verisi alınamadı. Birazdan tekrar denenecek…</div>
 
@@ -195,6 +245,98 @@ a.reset{color:inherit;text-decoration:none}
     <div>Tam otomatik · GitHub Actions · <a id="foot-ch" href="#" target="_blank" rel="noopener">kanal</a></div>
   </div>
 </div>
+
+<!-- Özelleştir modal -->
+<div class="modal" id="modal-custom">
+  <div class="sheet">
+    <div class="xrow"><h3 style="margin:0">🎛 Video üret</h3><button class="xbtn" data-close>×</button></div>
+    <div class="sub">Seçimlerini yap, üret ve yayın kuyruğuna eklensin.</div>
+
+    <div class="field">
+      <label>Referans arka plan</label>
+      <div class="seg" id="f-ref">
+        <div class="opt on" data-ref="auto">Otomatik bul</div>
+        <div class="opt" data-ref="link">Link</div>
+        <div class="opt" data-ref="file">Dosya yükle</div>
+      </div>
+      <input class="inp hide" id="f-link" placeholder="https://… (.mp4 / Pexels / Pixabay)" style="margin-top:10px" />
+      <input class="inp hide" id="f-file" type="file" accept="video/*" style="margin-top:10px" />
+      <div class="note hide" id="f-file-note">En fazla 60 MB. Daha büyükse link kullan.</div>
+    </div>
+
+    <div class="field">
+      <label>Format</label>
+      <div class="seg" id="f-fmt">
+        <div class="opt on" data-fmt="">Otomatik</div>
+        <div class="opt" data-fmt="25">25 / 5</div>
+        <div class="opt" data-fmt="50">50 / 10</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Sahne</label>
+      <div class="seg" id="f-scene">
+        <div class="opt on" data-scene="auto">Otomatik</div>
+        <div class="opt" data-scene="fire">🔥 Şömine</div>
+        <div class="opt" data-scene="rain">🌧️ Yağmur</div>
+        <div class="opt" data-scene="desk">📚 Lofi masa</div>
+        <div class="opt" data-scene="snow">❄️ Kar</div>
+        <div class="opt" data-scene="forest">🌲 Orman</div>
+        <div class="opt" data-scene="cafe">☕ Kafe</div>
+        <div class="opt" data-scene="ocean">🌊 Okyanus</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Saat konumu</label>
+      <div class="posgrid" id="f-pos">
+        <div class="pos" data-p="tl"><i></i></div>
+        <div class="pos on" data-p="tr"><i></i></div>
+        <div class="pos" data-p="center"><i></i></div>
+        <div class="pos" data-p="bl"><i></i></div>
+        <div class="pos" data-p="br"><i></i></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Saat stili</label>
+      <div class="seg" id="f-style">
+        <div class="opt on" data-style="digital">Dijital</div>
+        <div class="opt" data-style="minimal">Minimal</div>
+        <div class="opt" data-style="ring">Halka</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Vurgu rengi</label>
+      <div class="swrow" id="f-accent">
+        <div class="opt on" data-accent="">Otomatik</div>
+        <div class="sw" data-accent="#f0b15a" style="background:#f0b15a"></div>
+        <div class="sw" data-accent="#8fb8dc" style="background:#8fb8dc"></div>
+        <div class="sw" data-accent="#86b08a" style="background:#86b08a"></div>
+        <div class="sw" data-accent="#c7a3e6" style="background:#c7a3e6"></div>
+        <div class="sw" data-accent="#84c5ec" style="background:#84c5ec"></div>
+        <div class="sw" data-accent="#e89aa6" style="background:#e89aa6"></div>
+      </div>
+    </div>
+
+    <button class="go" id="f-go">Üret ve kuyruğa ekle</button>
+  </div>
+</div>
+
+<!-- Ayarlar modal -->
+<div class="modal" id="modal-settings">
+  <div class="sheet" style="max-width:460px">
+    <div class="xrow"><h3 style="margin:0">⚙ Relay ayarları</h3><button class="xbtn" data-close>×</button></div>
+    <div class="sub">Cloudflare relay URL'in ve PIN'in (yalnız bu cihazda saklanır).</div>
+    <div class="field"><label>Relay URL</label><input class="inp" id="s-url" placeholder="https://deepfocus-relay.xxx.workers.dev" /></div>
+    <div class="field"><label>PIN</label><input class="inp" id="s-pin" type="password" placeholder="••••••" /></div>
+    <button class="go" id="s-save">Kaydet & test et</button>
+    <div class="note" id="s-status" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 const STATUS_URL = "./status.json";
@@ -302,6 +444,78 @@ async function load(){
     document.getElementById("live").classList.add("bad");
   }
 }
+// ── üret paneli ──
+const LS={get:k=>{try{return localStorage.getItem(k)||""}catch{return""}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch{}}};
+let cfg={url:LS.get("df_relay"),pin:LS.get("df_pin")};
+const SCENE={
+  fire:{q:"fireplace cozy fire flames",amb:"fire",kind:"Cozy Fireplace",em:"🔥"},
+  rain:{q:"rain window glass cozy",amb:"rain",kind:"Rainy Window",em:"🌧️"},
+  desk:{q:"study desk lamp night cozy",amb:"rain",kind:"Lofi Study Desk",em:"📚"},
+  snow:{q:"snow falling window night",amb:"night",kind:"Snowy Night",em:"❄️"},
+  forest:{q:"rain forest green leaves",amb:"forest",kind:"Forest Rain",em:"🌲"},
+  cafe:{q:"coffee book cozy warm light",amb:"rain",kind:"Coffee & Books",em:"☕"},
+  ocean:{q:"ocean waves aerial calm",amb:"night",kind:"Calm Ocean",em:"🌊"},
+};
+function toast(m,k){const t=$("toast");t.textContent=m;t.className="toast show "+(k||"");setTimeout(()=>t.className="toast",3600);}
+function closeM(){document.querySelectorAll(".modal").forEach(m=>m.classList.remove("open"));}
+function openM(id){$(id).classList.add("open");}
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeM);
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeM();}));
+function singleSelect(id,attr){const c=$(id);c.addEventListener("click",e=>{const o=e.target.closest("["+attr+"]");if(!o||!c.contains(o))return;c.querySelectorAll("["+attr+"]").forEach(x=>x.classList.remove("on"));o.classList.add("on");if(id==="f-ref")onRef(o.getAttribute("data-ref"));});}
+[["f-ref","data-ref"],["f-fmt","data-fmt"],["f-scene","data-scene"],["f-style","data-style"],["f-accent","data-accent"]].forEach(([i,a])=>singleSelect(i,a));
+$("f-pos").addEventListener("click",e=>{const p=e.target.closest(".pos");if(!p)return;$("f-pos").querySelectorAll(".pos").forEach(x=>x.classList.remove("on"));p.classList.add("on");});
+const sel=(id,a)=>{const o=$(id).querySelector(".on");return o?o.getAttribute(a):"";};
+function onRef(v){$("f-link").classList.toggle("hide",v!=="link");$("f-file").classList.toggle("hide",v!=="file");$("f-file-note").classList.toggle("hide",v!=="file");}
+
+$("btn-gear").onclick=()=>{$("s-url").value=cfg.url;$("s-pin").value=cfg.pin;openM("modal-settings");};
+$("btn-custom").onclick=()=>{ if(!cfg.url){toast("Önce ⚙ relay ayarlarını gir","err");openM("modal-settings");return;} openM("modal-custom"); };
+$("btn-auto").onclick=()=>{ if(!cfg.url){toast("Önce ⚙ relay ayarlarını gir","err");openM("modal-settings");return;} if(confirm("Tamamen otomatik bir video üretilsin mi? (yayın kuyruğuna eklenir)")) generate({}); };
+$("s-save").onclick=async()=>{
+  cfg.url=$("s-url").value.trim().replace(/\/$/,"");cfg.pin=$("s-pin").value.trim();
+  LS.set("df_relay",cfg.url);LS.set("df_pin",cfg.pin);
+  $("s-status").textContent="test ediliyor…";
+  try{const r=await fetch(cfg.url+"/health");const j=await r.json();$("s-status").textContent=j.ok?"✓ bağlandı, hazır":("yanıt: "+JSON.stringify(j));}
+  catch(e){$("s-status").textContent="✗ ulaşılamadı — URL'yi kontrol et";}
+};
+async function api(path,opts){
+  const r=await fetch(cfg.url+path,{...opts,headers:{...((opts&&opts.headers)||{}),"X-Pin":cfg.pin}});
+  if(!r.ok){const t=await r.text().catch(()=>"");throw new Error("HTTP "+r.status+" "+t.slice(0,120));}
+  return r.json();
+}
+async function generate(inputs){
+  try{
+    if(inputs._fromForm){
+      delete inputs._fromForm;
+      const ref=sel("f-ref","data-ref");
+      if(ref==="link"){const u=$("f-link").value.trim();if(u)inputs.force_url=u;}
+      else if(ref==="file"){
+        const f=$("f-file").files[0];
+        if(f){ if(f.size>60*1024*1024){toast("Dosya 60MB'tan büyük — link kullan","err");return;}
+          toast("Dosya yükleniyor…");
+          const up=await api("/upload",{method:"POST",headers:{"X-Filename":f.name,"Content-Type":f.type||"video/mp4"},body:f});
+          inputs.force_url=up.url;
+        }
+      }
+    }
+    toast("Tetikleniyor…");
+    await api("/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({inputs})});
+    closeM();
+    toast("✅ Üretim başladı — birazdan 'Üretim durumu'nda görünür","ok");
+    setTimeout(load,10000);setTimeout(load,45000);
+  }catch(e){ toast("Hata: "+e.message,"err"); }
+}
+$("f-go").onclick=()=>{
+  const fmt=sel("f-fmt","data-fmt"),scene=sel("f-scene","data-scene"),style=sel("f-style","data-style"),accent=sel("f-accent","data-accent");
+  const pos=($("f-pos").querySelector(".on")||{}).getAttribute?.("data-p")||"";
+  const inputs={_fromForm:true};
+  if(fmt){inputs.focus=fmt;inputs.brk=fmt==="25"?"5":"10";}
+  if(scene&&scene!=="auto"&&SCENE[scene]){const s=SCENE[scene];inputs.query=s.q;inputs.ambient=s.amb;inputs.kind=s.kind;inputs.emoji=s.em;}
+  if(pos&&pos!=="tr")inputs.clock_pos=pos;
+  if(style&&style!=="digital")inputs.clock_style=style;
+  if(accent)inputs.accent=accent;
+  generate(inputs);
+};
+
 load();
 setInterval(load,60000);      // veriyi 60sn'de bir tazele
 setInterval(renderClock,1000); // geri sayım her saniye

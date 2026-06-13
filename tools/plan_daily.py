@@ -103,7 +103,9 @@ def main():
             "motivational study", "pomodoro timer", "lofi study", "studywithme"]
 
     props = {"focusMinutes": fmin, "breakMinutes": bmin, "videoScrim": p["scrim"],
-             "ambientKey": p["ambient"], "accentColor": p["accent"]}
+             "ambientKey": p["ambient"], "accentColor": p["accent"],
+             "timerPosition": env("IN_CLOCK_POS") or "tr",
+             "timerStyle": env("IN_CLOCK_STYLE") or "digital"}
 
     # render matrix (16200'lük parçalar)
     chunk = 16200

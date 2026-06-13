@@ -13,6 +13,8 @@ on:
       query:     { description: "stock arama override", type: string, default: "" }
       ambient:   { description: "ambient override", type: string, default: "" }
       accent:    { description: "accent #hex override", type: string, default: "" }
+      clock_pos: { description: "saat konumu tr|tl|br|bl|center", type: string, default: "" }
+      clock_style: { description: "saat stili digital|minimal|ring", type: string, default: "" }
 
 jobs:
   prepare:
@@ -40,6 +42,8 @@ jobs:
           IN_QUERY: ${{ inputs.query }}
           IN_AMBIENT: ${{ inputs.ambient }}
           IN_ACCENT: ${{ inputs.accent }}
+          IN_CLOCK_POS: ${{ inputs.clock_pos }}
+          IN_CLOCK_STYLE: ${{ inputs.clock_style }}
         run: |
           export DAY_INDEX=$(date -u +%j)
           python3 tools/plan_daily.py > plan.json

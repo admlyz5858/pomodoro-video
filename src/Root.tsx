@@ -377,6 +377,8 @@ const studyQuoteBase = {
   quoteFirstSeconds: 90,
   quoteEverySeconds: 600,
   quoteHoldSeconds: 8,
+  timerPosition: "tr",
+  timerStyle: "digital",
 };
 
 const studyQuote: StudyProps = {
