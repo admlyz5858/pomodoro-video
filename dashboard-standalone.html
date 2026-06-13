@@ -170,6 +170,28 @@ a.reset{color:inherit;text-decoration:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.ok{border-color:color-mix(in srgb,var(--green) 40%,transparent)}
 .toast.err{border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+/* öneri kartları */
+.igrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pcard{position:relative;border-radius:14px;overflow:hidden;cursor:pointer;border:1px solid var(--panel-line);aspect-ratio:16/10;background:#11151f;transition:.15s}
+.pcard:active{transform:scale(.96)}
+.pcard .pthumb{position:absolute;inset:0;background-size:cover;background-position:center}
+.pcard .pscrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,11,20,.12),rgba(8,11,20,.62))}
+.pcard .pmsg{position:absolute;left:8px;right:8px;bottom:23px;text-align:center;font-family:var(--disp);font-size:10.5px;color:#f6f0e4;line-height:1.25;text-shadow:0 1px 6px #000}
+.pcard .plabel{position:absolute;left:8px;bottom:7px;font-size:9px;letter-spacing:.4px;color:var(--cream);opacity:.92;text-shadow:0 1px 4px #000}
+.pcard .pfmt{position:absolute;right:7px;bottom:7px;font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 5px;border-radius:5px;background:rgba(0,0,0,.45)}
+.mclock{position:absolute;display:flex;flex-direction:column;gap:2px;align-items:flex-end;z-index:1}
+.mclock.tl{top:7px;left:7px;align-items:flex-start}.mclock.tr{top:7px;right:7px}
+.mclock.bl{bottom:22px;left:7px;align-items:flex-start}.mclock.br{bottom:22px;right:7px}
+.mclock.center{top:40%;left:50%;transform:translate(-50%,-50%);align-items:center}
+.mclock .ml{font-size:6px;letter-spacing:1px;text-transform:uppercase}
+.mclock .mt{font-family:var(--disp);font-weight:600;font-size:17px;color:#f6f0e4;line-height:1;text-shadow:0 1px 5px #000}
+.mclock.center .mt{font-size:24px}
+.mclock .md{display:flex;gap:3px;margin-top:1px}.mclock .md i{width:3px;height:3px;border-radius:50%}
+.mclock.pill{background:rgba(8,11,17,.42);border:1px solid rgba(255,255,255,.12);border-radius:7px;padding:5px 7px}
+.mclock.ring .rg{width:36px;height:36px;border-radius:50%;border:3px solid;display:flex;align-items:center;justify-content:center}
+.mclock.ring .mt{font-size:10px}
+.iempty{grid-column:1/-1;text-align:center;color:var(--mut);font-size:13px;padding:22px}
+@media(max-width:520px){.igrid{grid-template-columns:1fr 1fr}}
 .anim{opacity:0;transform:translateY(10px);animation:up .6s cubic-bezier(.2,.7,.3,1) forwards}
 .anim.d1{animation-delay:.06s}.anim.d2{animation-delay:.12s}.anim.d3{animation-delay:.18s}.anim.d4{animation-delay:.24s}
 @keyframes up{to{opacity:1;transform:none}}
@@ -190,7 +212,8 @@ a.reset{color:inherit;text-decoration:none}
   </header>
 
   <div class="cbar anim">
-    <button class="cbtn primary" id="btn-auto">✨ Sen karar ver</button>
+    <button class="cbtn primary" id="btn-ideas">💡 Öneriler</button>
+    <button class="cbtn ghost" id="btn-auto">✨ Sen karar ver</button>
     <button class="cbtn ghost" id="btn-custom">🎛 Özelleştir</button>
     <button class="cbtn gear" id="btn-gear" title="Relay ayarları">⚙</button>
   </div>
@@ -231,8 +254,8 @@ a.reset{color:inherit;text-decoration:none}
 
   <div class="grid2">
     <section class="card anim d3">
-      <h2 class="sec">📅 Yayın kuyruğu</h2>
-      <div id="queue"></div>
+      <h2 class="sec">📅 Yayın kuyruğu <span id="q-count" style="color:var(--mut);font-weight:400;font-size:14px"></span></h2>
+      <div id="queue" style="max-height:520px;overflow-y:auto"></div>
     </section>
     <section class="card anim d4">
       <h2 class="sec">▶ Son yayınlananlar</h2>
@@ -336,6 +359,37 @@ a.reset{color:inherit;text-decoration:none}
   </div>
 </div>
 
+<!-- Öneriler modal -->
+<div class="modal" id="modal-ideas">
+  <div class="sheet">
+    <div class="xrow"><h3 style="margin:0">💡 Öneriler</h3><button class="xbtn" data-close>×</button></div>
+    <div class="sub">Sahne + format seç, öneriler gelsin. Beğendiğine dokun → o üretilir.</div>
+    <div class="field">
+      <label>Sahne</label>
+      <div class="seg" id="i-scene">
+        <div class="opt on" data-scene="auto">🎲 Sürpriz</div>
+        <div class="opt" data-scene="fire">🔥 Şömine</div>
+        <div class="opt" data-scene="rain">🌧️ Yağmur</div>
+        <div class="opt" data-scene="desk">📚 Lofi masa</div>
+        <div class="opt" data-scene="snow">❄️ Kar</div>
+        <div class="opt" data-scene="forest">🌲 Orman</div>
+        <div class="opt" data-scene="cafe">☕ Kafe</div>
+        <div class="opt" data-scene="ocean">🌊 Okyanus</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Format</label>
+      <div class="seg" id="i-fmt">
+        <div class="opt on" data-fmt="">Otomatik</div>
+        <div class="opt" data-fmt="25">25 / 5</div>
+        <div class="opt" data-fmt="50">50 / 10</div>
+      </div>
+    </div>
+    <button class="go" id="i-fetch" style="margin-bottom:16px">🔄 Öneri getir</button>
+    <div id="i-grid" class="igrid"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -412,6 +466,7 @@ function render(d){
   document.getElementById("s-pub").textContent=st.published??0;
   document.getElementById("s-views").textContent=fmtViews(st.total_views??0);
   // queue
+  $("q-count").textContent="("+(d.queue||[]).length+" video)";
   document.getElementById("queue").innerHTML=(d.queue||[]).map(q=>{
     const dp=dpart(q.publish_at);
     return `<a class="reset" href="${q.url}" target="_blank" rel="noopener"><div class="qitem">
@@ -515,6 +570,58 @@ $("f-go").onclick=()=>{
   if(accent)inputs.accent=accent;
   generate(inputs);
 };
+
+// ── öneriler ──
+const COMBOS=[
+ {pos:"tr",style:"digital",accent:"#f0b15a",label:"Sağ üst · Dijital"},
+ {pos:"tl",style:"minimal",accent:"#8fb8dc",label:"Sol üst · Minimal"},
+ {pos:"br",style:"ring",accent:"#86b08a",label:"Sağ alt · Halka"},
+ {pos:"center",style:"ring",accent:"#c7a3e6",label:"Merkez · Halka"},
+ {pos:"bl",style:"digital",accent:"#84c5ec",label:"Sol alt · Dijital"},
+ {pos:"tr",style:"minimal",accent:"#e89aa6",label:"Sağ üst · Minimal"},
+];
+const SAMPLE="The first ten minutes are behind you.";
+let ideaCtx={};
+function miniClock(c){
+  const dots=`<div class="md">${[0,1,2].map(i=>`<i style="background:${i===0?c.accent:'transparent'};border:1px solid ${c.accent}"></i>`).join("")}</div>`;
+  const lab=`<div class="ml" style="color:${c.accent}">FOCUS</div>`;
+  if(c.style==="ring") return `<div class="mclock ring ${c.pos}"><div class="rg" style="border-color:${c.accent}"><span class="mt">25:00</span></div>${dots}</div>`;
+  return `<div class="mclock ${c.pos} ${c.style==='digital'?'pill':''}">${lab}<span class="mt">25:00</span>${dots}</div>`;
+}
+function pcard(clip,c,fmt){
+  const fl=fmt==="25"?"25/5":fmt==="50"?"50/10":"oto";
+  return `<div class="pcard" data-clip="${clip.url}" data-pos="${c.pos}" data-style="${c.style}" data-accent="${c.accent}">
+    <div class="pthumb" style="background-image:url('${clip.thumb}')"></div><div class="pscrim"></div>
+    ${miniClock(c)}<div class="pmsg">${SAMPLE}</div><div class="plabel">${c.label}</div>
+    <div class="pfmt" style="color:${c.accent}">${fl}</div></div>`;
+}
+async function fetchIdeas(){
+  const scene=sel("i-scene","data-scene"),fmt=sel("i-fmt","data-fmt");
+  ideaCtx={scene,fmt};
+  const q=(scene==="auto"||!SCENE[scene])?["rain window cozy","fireplace cozy fire","lofi study desk","snow falling window night","rain forest","coffee book cozy"][Math.floor(Math.random()*6)]:SCENE[scene].q;
+  $("i-grid").innerHTML=`<div class="iempty">öneriler getiriliyor…</div>`;
+  try{
+    const d=await api("/clips?q="+encodeURIComponent(q));
+    const clips=(d.clips||[]).filter(c=>c.thumb);
+    if(!clips.length){$("i-grid").innerHTML=`<div class="iempty">Klip bulunamadı — tekrar dene.</div>`;return;}
+    $("i-grid").innerHTML=COMBOS.map((c,i)=>pcard(clips[i%clips.length],c,fmt)).join("");
+  }catch(e){$("i-grid").innerHTML=`<div class="iempty">Hata: ${e.message}</div>`;}
+}
+$("i-grid").addEventListener("click",e=>{
+  const card=e.target.closest(".pcard");if(!card)return;
+  const {scene,fmt}=ideaCtx;
+  const inputs={force_url:card.getAttribute("data-clip")};
+  if(fmt){inputs.focus=fmt;inputs.brk=fmt==="25"?"5":"10";}
+  if(scene&&scene!=="auto"&&SCENE[scene]){const s=SCENE[scene];inputs.ambient=s.amb;inputs.kind=s.kind;inputs.emoji=s.em;inputs.query=s.q;}
+  const pos=card.getAttribute("data-pos"),style=card.getAttribute("data-style"),accent=card.getAttribute("data-accent");
+  if(pos&&pos!=="tr")inputs.clock_pos=pos;
+  if(style&&style!=="digital")inputs.clock_style=style;
+  if(accent)inputs.accent=accent;
+  if(confirm("Bu öneri üretilsin mi? (yayın kuyruğuna eklenir)")) generate(inputs);
+});
+singleSelect("i-scene","data-scene");singleSelect("i-fmt","data-fmt");
+$("i-fetch").onclick=fetchIdeas;
+$("btn-ideas").onclick=()=>{ if(!cfg.url){toast("Önce ⚙ relay ayarlarını gir","err");openM("modal-settings");return;} openM("modal-ideas"); if(!$("i-grid").children.length) fetchIdeas(); };
 
 load();
 setInterval(load,60000);      // veriyi 60sn'de bir tazele
