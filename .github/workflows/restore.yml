@@ -1,0 +1,42 @@
+name: Restore Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:   { description: "Artifact'in bulunduğu run id", type: string }
+      artifact: { description: "Artifact adı (örn quote-q1-small)", type: string }
+      clip:     { description: "meta numarası (meta/clipN.json)", type: string }
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install google-auth google-api-python-client
+      - name: Download artifact (başka run'dan)
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact }}
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+          path: dl
+      - name: Video + thumbnail
+        run: |
+          f=$(ls dl/*.mp4 | head -1)
+          cp "$f" final.mp4
+          ls -la final.mp4
+          ffmpeg -y -ss 108 -i final.mp4 -frames:v 1 -vf scale=1280:720 -q:v 2 thumb.jpg
+      - name: YouTube'a yükle (meta publishAt ile)
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: python3 tools/yt_upload_ci.py final.mp4 "meta/clip${{ inputs.clip }}.json" thumb.jpg
