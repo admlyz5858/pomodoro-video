@@ -166,7 +166,7 @@ def main():
     data = {
         "updated_at": NOW.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "channel": chan,
-        "automation": {"healthy": healthy, "cron": "0 5 * * *", "cron_label": "yayın · her gün 12:00 TSİ"},
+        "automation": {"healthy": healthy, "cron": "0 5 * * 1,3,5", "cron_label": "yayın · Pzt/Çar/Cum 12:00 TSİ"},
         "stats": {"queue": len(queue), "published": len(published),
                   "buffer_days": len(queue), "total_views": total_views},
         "next": queue[0] if queue else None,

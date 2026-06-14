@@ -44,10 +44,14 @@ def next_publish_at(yt):
                 latest = d
     now = dt.datetime.now(dt.timezone.utc)
     base = latest if (latest and latest > now) else now
+    # haftada 3: bir sonraki Pazartesi/Çarşamba/Cuma (weekday 0/2/4), en erken yarın
+    PUB_DAYS = {0, 2, 4}
     nxt = (base + dt.timedelta(days=1)).date()
     tomorrow = (now + dt.timedelta(days=1)).date()
     if nxt < tomorrow:
         nxt = tomorrow
+    while nxt.weekday() not in PUB_DAYS:
+        nxt += dt.timedelta(days=1)
     return dt.datetime(nxt.year, nxt.month, nxt.day, 9, 0, 0,
                        tzinfo=dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 

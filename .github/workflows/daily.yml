@@ -2,7 +2,7 @@ name: Daily Study Video
 
 on:
   schedule:
-    - cron: "0 5 * * *"   # her gün 05:00 UTC (yayın slotu sonraki boş güne 12:00 TSİ)
+    - cron: "0 5 * * 1,3,5"   # Pzt/Çar/Cum 05:00 UTC → yayın 12:00 TSİ (haftada 3)
   workflow_dispatch:
     inputs:
       force_url: { description: "klip URL (boşsa otomatik bulunur)", type: string, default: "" }
