@@ -13,6 +13,7 @@ import { SceneFor } from "./scene/SceneFor";
 import { RealScene } from "./scene/RealScene";
 import { DigitalClock } from "./components/DigitalClock";
 import { CornerTimer, TimerPos, TimerVariant } from "./components/CornerTimer";
+import { CenterTimer, CenterVariant } from "./components/CenterTimer";
 import { QuoteOverlay } from "./components/QuoteOverlay";
 import { ThemedCountdown } from "./components/ThemedCountdown";
 import { TitleCard } from "./components/TitleCard";
@@ -201,6 +202,16 @@ const TimerBlock: React.FC<{
       <LastTicks phaseFrames={phaseFrames} />
 
       {cornerTimer ? (
+        (timerStyle === "ringserif" || timerStyle === "bar") ? (
+          <CenterTimer
+            variant={timerStyle as CenterVariant}
+            seconds={seconds}
+            progress={progress}
+            label={label}
+            accent={clockAccent}
+            subscribeText={timerStyle === "bar" ? "Enjoy the music?\nSubscribe for more!" : undefined}
+          />
+        ) : (
         <>
           {(timerPosition ?? "tr") === "center" ? (
             <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
@@ -241,6 +252,7 @@ const TimerBlock: React.FC<{
             />
           ) : null}
         </>
+        )
       ) : (
         <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
           <DigitalClock

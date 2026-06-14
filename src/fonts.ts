@@ -4,10 +4,17 @@ import { loadFont as loadMono } from "@remotion/google-fonts/JetBrainsMono";
 import { loadFont as loadOutfit } from "@remotion/google-fonts/Outfit";
 import { loadFont as loadUnbounded } from "@remotion/google-fonts/Unbounded";
 import { loadFont as loadBebas } from "@remotion/google-fonts/BebasNeue";
+import { loadFont as loadCormorant } from "@remotion/google-fonts/CormorantGaramond";
 
 // Fraunces: karakterli editöryel serif (cozy/şık saat)
 export const fraunces = loadFraunces("normal", {
   weights: ["400", "500", "600"],
+  subsets: ["latin"],
+}).fontFamily;
+
+// Cormorant Garamond: ince/klasik serif (zarif çember saati)
+export const cormorant = loadCormorant("normal", {
+  weights: ["300", "400", "500"],
   subsets: ["latin"],
 }).fontFamily;
 

@@ -1,0 +1,37 @@
+name: Style Shots
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  shots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-audit --no-fund
+      - run: npx remotion browser ensure
+      - name: Render style stills
+        run: |
+          mkdir -p shots
+          # Stil A (ringserif) — odak, kafe sahnesi
+          npx remotion still StudyQuote shots/A-ringserif-focus.png --frame=460 \
+            --props='{"timerStyle":"ringserif","videoSrc":"real8.mp4","videoLoopFrames":272,"accentColor":"#e7c074"}'
+          # Stil A — mola, balkon sahnesi
+          npx remotion still StudyQuote shots/A-ringserif-break.png --frame=90460 \
+            --props='{"timerStyle":"ringserif","videoSrc":"real9.mp4","videoLoopFrames":2124,"accentColor":"#94c8cf"}'
+          # Stil B (bar) — odak, kafe sahnesi
+          npx remotion still StudyQuote shots/B-bar-focus.png --frame=460 \
+            --props='{"timerStyle":"bar","videoSrc":"real8.mp4","videoLoopFrames":272,"accentColor":"#e7c074"}'
+          # Stil B — mola, balkon sahnesi
+          npx remotion still StudyQuote shots/B-bar-break.png --frame=90460 \
+            --props='{"timerStyle":"bar","videoSrc":"real9.mp4","videoLoopFrames":2124,"accentColor":"#94c8cf"}'
+          ls -la shots
+      - uses: actions/upload-artifact@v4
+        with:
+          name: styleshots
+          path: shots
+          retention-days: 7
+          if-no-files-found: error
