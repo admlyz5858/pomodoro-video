@@ -103,10 +103,20 @@ def main():
             "deep focus", "no music study", "focus timer", "study motivation",
             "motivational study", "pomodoro timer", "lofi study", "studywithme"]
 
+    # saat stili rotasyonu (gün gün değişir); ringserif/bar tam-ekran → konum merkez
+    CLOCK_STYLES = ["digital", "minimal", "ring", "ringserif", "bar"]
+    CENTER_STYLES = ("ringserif", "bar")
+    CORNERS = ["tr", "tl", "br", "bl"]
+    style = env("IN_CLOCK_STYLE") or CLOCK_STYLES[day % len(CLOCK_STYLES)]
+    if env("IN_CLOCK_POS"):
+        position = env("IN_CLOCK_POS")
+    elif style in CENTER_STYLES:
+        position = "center"
+    else:
+        position = CORNERS[day % len(CORNERS)]
     props = {"focusMinutes": fmin, "breakMinutes": bmin, "videoScrim": p["scrim"],
              "ambientKey": p["ambient"], "accentColor": p["accent"],
-             "timerPosition": env("IN_CLOCK_POS") or "tr",
-             "timerStyle": env("IN_CLOCK_STYLE") or "digital"}
+             "timerPosition": position, "timerStyle": style}
 
     # render matrix (16200'lük parçalar)
     chunk = 16200

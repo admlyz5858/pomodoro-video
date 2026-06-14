@@ -330,6 +330,8 @@ a.reset{color:inherit;text-decoration:none}
         <div class="opt on" data-style="digital">Dijital</div>
         <div class="opt" data-style="minimal">Minimal</div>
         <div class="opt" data-style="ring">Halka</div>
+        <div class="opt" data-style="ringserif">Zarif Çember</div>
+        <div class="opt" data-style="bar">Alt Bar</div>
       </div>
     </div>
 
@@ -583,10 +585,11 @@ $("f-go").onclick=()=>{
 
 // ── öneriler ──
 const POSES=["tr","tl","br","bl","center"];
-const STYLES=["digital","minimal","ring"];
+const STYLES=["digital","minimal","ring","ringserif","bar"];
+const CENTER_STYLES=["ringserif","bar"]; // konum bağımsız (tam ekran)
 const ACCENTS=["#f0b15a","#8fb8dc","#86b08a","#c7a3e6","#84c5ec","#e89aa6","#7fc4c9","#e6b07a","#b9d36a","#d98fce","#f2e6c0","#9aa7ff"];
 const POSLBL={tr:"Sağ üst",tl:"Sol üst",br:"Sağ alt",bl:"Sol alt",center:"Merkez"};
-const STLBL={digital:"Dijital",minimal:"Minimal",ring:"Halka"};
+const STLBL={digital:"Dijital",minimal:"Minimal",ring:"Halka",ringserif:"Zarif Çember",bar:"Alt Bar"};
 const SAMPLES=[
  "The first ten minutes are behind you.","Small steps finish the biggest work.",
  "Stay with this one thing.","One more paragraph.","Discipline over motivation.",
@@ -598,9 +601,12 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 function makeCombos(n){
   const seen=new Set(),out=[]; let g=0;
   while(out.length<n && g++<300){
-    const pos=pick(POSES),style=pick(STYLES);
-    const key=pos+style; if(seen.has(key))continue; seen.add(key);
-    out.push({pos,style,accent:pick(ACCENTS),label:`${POSLBL[pos]} · ${STLBL[style]}`});
+    const style=pick(STYLES);
+    const center=CENTER_STYLES.includes(style);
+    const pos=center?"center":pick(POSES.filter(p=>p!=="center"));
+    const key=center?style:(pos+style); if(seen.has(key))continue; seen.add(key);
+    const label=center?STLBL[style]:`${POSLBL[pos]} · ${STLBL[style]}`;
+    out.push({pos,style,accent:pick(ACCENTS),label});
   }
   return out;
 }
@@ -608,6 +614,14 @@ let ideaCtx={};
 function miniClock(c){
   const dots=`<div class="md">${[0,1,2].map(i=>`<i style="background:${i===0?c.accent:'transparent'};border:1px solid ${c.accent}"></i>`).join("")}</div>`;
   const lab=`<div class="ml" style="color:${c.accent}">FOCUS</div>`;
+  if(c.style==="ringserif") return `<div class="mclock center" style="align-items:center">
+    <div style="width:88px;height:88px;border-radius:50%;border:2px solid #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 0 9px ${c.accent}77">
+      <span style="font-family:'Fraunces',serif;font-weight:500;font-size:19px;color:#fff;line-height:1">25:00</span>
+    </div>
+    <div style="font-family:'Fraunces',serif;font-size:9px;letter-spacing:3px;color:#fff;opacity:.9;margin-top:5px">FOCUS</div></div>`;
+  if(c.style==="bar") return `<div style="position:absolute;left:9px;right:9px;bottom:30px;z-index:1">
+    <div style="display:flex;justify-content:space-between;font-family:var(--ui);font-weight:700;font-size:11px;color:#fff;text-shadow:0 1px 4px #000;margin-bottom:4px"><span>FOCUS</span><span>25:00</span></div>
+    <div style="height:4px;border-radius:2px;background:rgba(255,255,255,.3)"><div style="height:100%;width:35%;background:#fff;border-radius:2px;box-shadow:0 0 6px ${c.accent}"></div></div></div>`;
   if(c.style==="ring") return `<div class="mclock ring ${c.pos}"><div class="rg" style="border-color:${c.accent}"><span class="mt">25:00</span></div>${dots}</div>`;
   return `<div class="mclock ${c.pos} ${c.style==='digital'?'pill':''}">${lab}<span class="mt">25:00</span>${dots}</div>`;
 }
