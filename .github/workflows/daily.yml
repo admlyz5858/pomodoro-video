@@ -128,8 +128,8 @@ jobs:
           i=0
           while [ $i -lt $N ]; do echo "file 'chunks/chunk-$i/chunk-$i.mp4'" >> list.txt; i=$((i+1)); done
           ffmpeg -y -f concat -safe 0 -i list.txt \
-            -c:v libx264 -preset veryfast -crf 25 -maxrate 1800k -bufsize 3600k \
-            -pix_fmt yuv420p -c:a aac -b:a 128k -movflags +faststart final.mp4
+            -c:v libx264 -preset veryfast -crf 23 -maxrate 2400k -bufsize 4800k \
+            -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart final.mp4
           ls -la final.mp4
       - uses: actions/upload-artifact@v4
         with:
