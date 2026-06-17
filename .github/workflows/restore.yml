@@ -28,12 +28,23 @@ jobs:
           run-id: ${{ inputs.run_id }}
           github-token: ${{ github.token }}
           path: dl
-      - name: Video + thumbnail
+      - name: Video + önizleme kareleri
         run: |
           f=$(ls dl/*.mp4 | head -1)
           cp "$f" final.mp4
           ls -la final.mp4
           ffmpeg -y -ss 108 -i final.mp4 -frames:v 1 -vf scale=1280:720 -q:v 2 thumb.jpg
+          ffmpeg -y -ss 30 -i final.mp4 -frames:v 1 -vf scale=1280:720 -q:v 2 preview-focus.jpg || true
+          ffmpeg -y -ss 3060 -i final.mp4 -frames:v 1 -vf scale=1280:720 -q:v 2 preview-break.jpg || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: preview
+          path: |
+            thumb.jpg
+            preview-focus.jpg
+            preview-break.jpg
+          retention-days: 7
+          if-no-files-found: warn
       - name: YouTube'a yükle (meta publishAt ile)
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
