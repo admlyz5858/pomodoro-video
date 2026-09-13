@@ -3,14 +3,14 @@ name: Auto Clip (render + transcode)
 on:
   workflow_dispatch:
     inputs:
-      src:     { description: "public/ içindeki klip (örn real10.mp4)", type: string }
-      lf:      { description: "loopFrames", type: string }
+      src:     { description: "public/ içindeki klip (örn real10.mp4)", type: string, required: true }
+      lf:      { description: "loopFrames", type: string, required: true }
       scrim:   { description: "videoScrim (0-1)", type: string, default: "0.4" }
       amb:     { description: "ambientKey (rain/fire/forest/night/storm)", type: string, default: "rain" }
       accent:  { description: "accentColor (#rrggbb)", type: string, default: "#8fb8dc" }
       fmin:    { description: "focusMinutes (25/50)", type: string, default: "25" }
       bmin:    { description: "breakMinutes (5/10)", type: string, default: "5" }
-      name:    { description: "çıktı adı (örn auto-2026-06-22)", type: string }
+      name:    { description: "çıktı adı (örn auto-2026-06-22)", type: string, required: true }
 
 jobs:
   plan:
@@ -23,7 +23,14 @@ jobs:
       - id: mk
         run: |
           F=${{ inputs.fmin }}; B=${{ inputs.bmin }}
-          PROPS="{\"videoSrc\":\"${{ inputs.src }}\",\"videoLoopFrames\":${{ inputs.lf }},\"videoScrim\":${{ inputs.scrim }},\"ambientKey\":\"${{ inputs.amb }}\",\"accentColor\":\"${{ inputs.accent }}\",\"focusMinutes\":$F,\"breakMinutes\":$B}"
+          SRC="${{ inputs.src }}"
+          LF="${{ inputs.lf }}"
+          if [ -z "$SRC" ] || [ -z "$LF" ]; then
+            echo "::error::src ve lf inputları zorunludur"
+            exit 1
+          fi
+          PROPS="{\"videoSrc\":\"$SRC\",\"videoLoopFrames\":$LF,\"videoScrim\":${{ inputs.scrim }},\"ambientKey\":\"${{ inputs.amb }}\",\"accentColor\":\"${{ inputs.accent }}\",\"focusMinutes\":$F,\"breakMinutes\":$B}"
+          echo "$PROPS" | node -e "process.stdin.resume(); let d=''; process.stdin.on('data',c=>d+=c); process.stdin.on('end',()=>{try{JSON.parse(d);process.exit(0)}catch(e){console.error('Geçersiz JSON:',e.message);process.exit(1)}})"
           node -e "
             const F=$F,B=$B,fps=30;
             const total=(4+10+3*(F*60+B*60)+5)*fps, c=16200, a=[];
@@ -44,7 +51,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
+        with: { node-version: 22 }
       - run: npm install --no-audit --no-fund
       - run: npx remotion browser ensure
       - name: Render chunk ${{ matrix.idx }}
