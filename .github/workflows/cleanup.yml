@@ -1,0 +1,37 @@
+name: Cleanup Artifacts
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  actions: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Delete all expired artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Listing all artifacts..."
+          PAGE=1
+          DELETED=0
+          while true; do
+            RESPONSE=$(gh api "repos/$REPO/actions/artifacts?per_page=100&page=$PAGE" 2>/dev/null || echo '{"artifacts":[]}')
+            COUNT=$(echo "$RESPONSE" | jq '.artifacts | length')
+            [ "$COUNT" -eq 0 ] && break
+            echo "Page $PAGE: $COUNT artifacts"
+            echo "$RESPONSE" | jq -r '.artifacts[] | select(.expired==true) | "\(.id) \(.name) \(.size_in_bytes)"' | while read ID NAME SIZE; do
+              echo "Deleting expired artifact $NAME (id=$ID, size=$SIZE)"
+              gh api -X DELETE "repos/$REPO/actions/artifacts/$ID" 2>/dev/null && DELETED=$((DELETED+1)) || echo "  Failed to delete $ID"
+            done
+            echo "$RESPONSE" | jq -r '.artifacts[] | select(.expired==false) | "\(.id) \(.name) \(.size_in_bytes)"' | while read ID NAME SIZE; do
+              echo "Deleting active artifact $NAME (id=$ID, size=$SIZE)"
+              gh api -X DELETE "repos/$REPO/actions/artifacts/$ID" 2>/dev/null && DELETED=$((DELETED+1)) || echo "  Failed to delete $ID"
+            done
+            PAGE=$((PAGE+1))
+          done
+          echo "Cleanup complete."
