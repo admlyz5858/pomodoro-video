@@ -78,7 +78,7 @@ jobs:
             loop.mp4
             props.json
             meta.json
-          retention-days: 3
+          retention-days: 1
           if-no-files-found: error
 
   render:
@@ -110,17 +110,31 @@ jobs:
         with:
           name: chunk-${{ matrix.idx }}
           path: out/chunk-${{ matrix.idx }}.mp4
-          retention-days: 3
+          retention-days: 1
           if-no-files-found: error
 
   merge:
     needs: [prepare, render]
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    permissions:
+      actions: write
     steps:
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - uses: actions/download-artifact@v4
         with: { path: chunks }
+      - name: Delete chunk artifacts to free storage
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          N=${{ needs.prepare.outputs.chunks }}
+          i=0
+          while [ $i -lt $N ]; do
+            AID=$(gh api "repos/$REPO/actions/artifacts?name=chunk-$i&per_page=1" --jq '.artifacts[0].id' 2>/dev/null || echo "")
+            [ -n "$AID" ] && gh api -X DELETE "repos/$REPO/actions/artifacts/$AID" 2>/dev/null && echo "Deleted chunk-$i ($AID)" || echo "Skip chunk-$i"
+            i=$((i+1))
+          done
       - name: Concat (kayıpsız, CI'dan yüklenecek)
         run: |
           N=${{ needs.prepare.outputs.chunks }}
@@ -133,13 +147,15 @@ jobs:
         with:
           name: final
           path: final.mp4
-          retention-days: 5
+          retention-days: 1
           if-no-files-found: error
 
   publish:
     needs: [prepare, merge]
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      actions: write
     steps:
       - uses: actions/checkout@v4
       - run: sudo apt-get update && sudo apt-get install -y ffmpeg
@@ -158,3 +174,13 @@ jobs:
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
           YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
         run: python3 tools/yt_upload_ci.py final.mp4 prep/meta.json thumb.jpg
+      - name: Cleanup all artifacts
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          for NAME in prep final; do
+            AID=$(gh api "repos/$REPO/actions/artifacts?name=$NAME&per_page=1" --jq '.artifacts[0].id' 2>/dev/null || echo "")
+            [ -n "$AID" ] && gh api -X DELETE "repos/$REPO/actions/artifacts/$AID" 2>/dev/null && echo "Deleted $NAME ($AID)" || echo "Skip $NAME"
+          done
